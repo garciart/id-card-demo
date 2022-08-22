@@ -1,0 +1,405 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+PS C:\Users\Rob> dotnet --list-sdks
+3.1.422 [C:\Program Files\dotnet\sdk]
+5.0.303 [C:\Program Files\dotnet\sdk]
+5.0.400 [C:\Program Files\dotnet\sdk]
+5.0.408 [C:\Program Files\dotnet\sdk]
+5.0.410 [C:\Program Files\dotnet\sdk]
+PS C:\Users\Rob> cd C:\Users\Rob\source\repos
+PS C:\Users\Rob\source\repos> dotnet new webapp --output IDCardDemo --framework netcoreapp3.1 --auth Individual
+The template "ASP.NET Core Web App" was created successfully.
+This template contains technologies from parties other than Microsoft, see https://aka.ms/aspnetcore/3.1-third-party-notices for details.
+
+Processing post-creation actions...
+Running 'dotnet restore' on IDCardDemo\IDCardDemo.csproj...
+  Determining projects to restore...
+  Restored C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 205 ms).
+Restore succeeded.
+
+PS C:\Users\Rob\source\repos> cd IDCardDemo
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet new sln
+The template "Solution File" was created successfully.
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet sln add IDCardDemo.csproj
+Project `IDCardDemo.csproj` added to the solution.
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet sln list
+Project(s)
+----------
+IDCardDemo.csproj
+PS C:\Users\Rob\source\repos\IDCardDemo> ls
+
+
+    Directory: C:\Users\Rob\source\repos\IDCardDemo
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----         8/21/2022   6:07 PM                Areas
+d-----         8/21/2022   6:07 PM                Data
+d-----         8/21/2022   6:07 PM                obj
+d-----         8/21/2022   6:07 PM                Pages
+d-----         8/21/2022   6:07 PM                Properties
+d-----         8/21/2022   6:07 PM                wwwroot
+-a----         8/21/2022   6:07 PM         106496 app.db
+-a----         8/21/2022   6:07 PM            162 appsettings.Development.json
+-a----         8/21/2022   6:07 PM            270 appsettings.json
+-a----         8/21/2022   6:07 PM            877 IDCardDemo.csproj
+-a----         8/21/2022   6:08 PM           1736 IDCardDemo.sln
+-a----         8/21/2022   6:07 PM            718 Program.cs
+-a----         8/21/2022   6:07 PM           2290 Startup.cs
+
+
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet dev-certs https --clean
+Cleaning HTTPS development certificates from the machine. A prompt might get displayed to confirm the removal of some of the certificates.
+HTTPS development certificates successfully removed from the machine.
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet dev-certs https --trust
+Trusting the HTTPS development certificate was requested. A confirmation prompt will be displayed if the certificate was not previously trusted. Click yes on the prompt to trust the certificate.
+The HTTPS developer certificate was generated successfully.
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet remove package Microsoft.Data.Sqlite
+info : Removing PackageReference for package 'Microsoft.Data.Sqlite' from project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet add package Microsoft.Data.Sqlite --framework netcoreapp3.1
+  Determining projects to restore...
+  Writing C:\Users\Rob\AppData\Local\Temp\tmp9D28.tmp
+info : Adding PackageReference for package 'Microsoft.Data.Sqlite' into project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info :   GET https://api.nuget.org/v3/registration5-gz-semver2/microsoft.data.sqlite/index.json
+info :   OK https://api.nuget.org/v3/registration5-gz-semver2/microsoft.data.sqlite/index.json 132ms
+info :   GET https://api.nuget.org/v3/registration5-gz-semver2/microsoft.data.sqlite/page/1.0.0-beta1/3.1.15.json
+info :   OK https://api.nuget.org/v3/registration5-gz-semver2/microsoft.data.sqlite/page/1.0.0-beta1/3.1.15.json 137ms
+info :   GET https://api.nuget.org/v3/registration5-gz-semver2/microsoft.data.sqlite/page/3.1.16/7.0.0-preview.5.22302.2.json
+info :   OK https://api.nuget.org/v3/registration5-gz-semver2/microsoft.data.sqlite/page/3.1.16/7.0.0-preview.5.22302.2.json 135ms
+info :   GET https://api.nuget.org/v3/registration5-gz-semver2/microsoft.data.sqlite/page/7.0.0-preview.6.22329.4/7.0.0-preview.7.22376.2.json
+info :   OK https://api.nuget.org/v3/registration5-gz-semver2/microsoft.data.sqlite/page/7.0.0-preview.6.22329.4/7.0.0-preview.7.22376.2.json 140ms
+info : Restoring packages for C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj...
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.diagnostics.entityframeworkcore/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.diagnostics.entityframeworkcore/index.json 124ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/index.json 215ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json 223ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json 261ms
+warn : NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+info : Package 'Microsoft.Data.Sqlite' is compatible with all the specified frameworks in project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : PackageReference for package 'Microsoft.Data.Sqlite' version '6.0.8' added to file 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Committing restore...
+info : Assets file has not changed. Skipping assets file writing. Path: C:\Users\Rob\source\repos\IDCardDemo\obj\project.assets.json
+log  : Restored C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 599 ms).
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet add package SQLitePCLRaw.bundle_e_sqlcipher --framework netcoreapp3.1
+  Determining projects to restore...
+  Writing C:\Users\Rob\AppData\Local\Temp\tmpA95D.tmp
+info : Adding PackageReference for package 'SQLitePCLRaw.bundle_e_sqlcipher' into project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info :   GET https://api.nuget.org/v3/registration5-gz-semver2/sqlitepclraw.bundle_e_sqlcipher/index.json
+info :   OK https://api.nuget.org/v3/registration5-gz-semver2/sqlitepclraw.bundle_e_sqlcipher/index.json 362ms
+info : Restoring packages for C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj...
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.diagnostics.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json
+warn : NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+info : Package 'SQLitePCLRaw.bundle_e_sqlcipher' is compatible with all the specified frameworks in project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : PackageReference for package 'SQLitePCLRaw.bundle_e_sqlcipher' version '2.1.0' updated in file 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Committing restore...
+info : Assets file has not changed. Skipping assets file writing. Path: C:\Users\Rob\source\repos\IDCardDemo\obj\project.assets.json
+log  : Restored C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 287 ms).
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet add package Microsoft.EntityFrameworkCore --version=3.*
+  Determining projects to restore...
+  Writing C:\Users\Rob\AppData\Local\Temp\tmpB1D9.tmp
+info : Adding PackageReference for package 'Microsoft.EntityFrameworkCore' into project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Restoring packages for C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj...
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.diagnostics.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/3.1.28/microsoft.entityframeworkcore.3.1.28.nupkg
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/3.1.28/microsoft.entityframeworkcore.3.1.28.nupkg 255ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.abstractions/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.analyzers/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.caching.memory/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.abstractions/index.json 58ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.abstractions/3.1.28/microsoft.entityframeworkcore.abstractions.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.analyzers/index.json 110ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.analyzers/3.1.28/microsoft.entityframeworkcore.analyzers.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.caching.memory/index.json 125ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.caching.memory/3.1.28/microsoft.extensions.caching.memory.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.abstractions/3.1.28/microsoft.entityframeworkcore.abstractions.3.1.28.nupkg 74ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging/index.json 125ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/index.json 129ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.analyzers/3.1.28/microsoft.entityframeworkcore.analyzers.3.1.28.nupkg 22ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging/3.1.28/microsoft.extensions.logging.3.1.28.nupkg
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/3.1.28/microsoft.extensions.dependencyinjection.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.caching.memory/3.1.28/microsoft.extensions.caching.memory.3.1.28.nupkg 48ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging/3.1.28/microsoft.extensions.logging.3.1.28.nupkg 41ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection/3.1.28/microsoft.extensions.dependencyinjection.3.1.28.nupkg 47ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration.binder/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.options/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.caching.abstractions/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection.abstractions/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.options/index.json 45ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.options/3.1.28/microsoft.extensions.options.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration.binder/index.json 62ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration.binder/3.1.28/microsoft.extensions.configuration.binder.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.caching.abstractions/index.json 71ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/index.json 76ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.caching.abstractions/3.1.28/microsoft.extensions.caching.abstractions.3.1.28.nupkg
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.28/microsoft.extensions.logging.abstractions.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration.binder/3.1.28/microsoft.extensions.configuration.binder.3.1.28.nupkg 30ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection.abstractions/index.json 102ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.caching.abstractions/3.1.28/microsoft.extensions.caching.abstractions.3.1.28.nupkg 31ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection.abstractions/3.1.28/microsoft.extensions.dependencyinjection.abstractions.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.options/3.1.28/microsoft.extensions.options.3.1.28.nupkg 94ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/3.1.28/microsoft.extensions.logging.abstractions.3.1.28.nupkg 64ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.dependencyinjection.abstractions/3.1.28/microsoft.extensions.dependencyinjection.abstractions.3.1.28.nupkg 34ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.primitives/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/index.json 105ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/3.1.28/microsoft.extensions.configuration.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.primitives/index.json 67ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.primitives/3.1.28/microsoft.extensions.primitives.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration/3.1.28/microsoft.extensions.configuration.3.1.28.nupkg 37ms
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.primitives/3.1.28/microsoft.extensions.primitives.3.1.28.nupkg 29ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration.abstractions/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration.abstractions/index.json 83ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration.abstractions/3.1.28/microsoft.extensions.configuration.abstractions.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.configuration.abstractions/3.1.28/microsoft.extensions.configuration.abstractions.3.1.28.nupkg 27ms
+info : Installed Microsoft.EntityFrameworkCore.Analyzers 3.1.28 from https://api.nuget.org/v3/index.json with content hash ciNwkUwOW65tossW560kGXrZc5JkjW70PmLQ5dKqEJ5bIJw5x5tnJ/t7zZCrg8si0IbBc4ZH1iRCzGu5Wnu9jQ==.
+info : Installed Microsoft.Extensions.DependencyInjection.Abstractions 3.1.28 from https://api.nuget.org/v3/index.json with content hash uO7jKl8mfmqp4E7lfHvRwO+n6eb2YZVDzyEgFNXcOavWSxMvU0qBXyzvfpFBLLeAMcubP49dNtx5Gu/yIVdJxg==.
+info : Installed Microsoft.Extensions.Logging.Abstractions 3.1.28 from https://api.nuget.org/v3/index.json with content hash QcCzhUcHiUVR+RZzi4f51e9pDFSBeaypruu3N2+8sv4R9ZDGHeSYMHGzRirlkckNACgOdowYUq5p0wlauz73+w==.
+info : Installed Microsoft.EntityFrameworkCore.Abstractions 3.1.28 from https://api.nuget.org/v3/index.json with content hash 7GxcI+LqoaoJUgu00qNi4dFP6zncDcfQ8aUkyEg9xsCEPjgAyc+u6X8vnuF/5HQMD1MoJkcPcnjuPi1dkR673A==.
+info : Installed Microsoft.Extensions.Primitives 3.1.28 from https://api.nuget.org/v3/index.json with content hash KXPub1KNWGogTI/3vW9cFcwCweOubwUhDS5GUnNOTt4277Ngks5YSC0Ea/xSd2kP3lAmA6p4MJlvuO/0IauHew==.
+info : Installed Microsoft.Extensions.Configuration.Abstractions 3.1.28 from https://api.nuget.org/v3/index.json with content hash SHBQcqrAUoaEQ3bI+4grVkYmmZwQX/6/kalfn5+77/1khB4/lVnqYswcaLBR6vS/4CXXoLnzdRLzEGHPUgxC1w==.
+info : Installed Microsoft.Extensions.Caching.Abstractions 3.1.28 from https://api.nuget.org/v3/index.json with content hash 3BtJGhWCE8mVX1vn20hiE/dqCc+LVR/dLmY62Z+xcQzUlOsAxmaiPMTbYX6kVKCA6rDDN+aDFgDqc+x23iSK0w==.
+info : Installed Microsoft.Extensions.Caching.Memory 3.1.28 from https://api.nuget.org/v3/index.json with content hash Dxaqix8SlraIAQp0oaqZr8TW/2qIxwENdzUMxBJq0PClnzgFuPHFKvXmJ2Y5ZqM8m3YRYFitb5mZGW0Y9pz84g==.
+info : Installed Microsoft.Extensions.Options 3.1.28 from https://api.nuget.org/v3/index.json with content hash uXiv46Bfd8bDvWng27u9MSOhwQ1otkNf9mf+NzBa3Ty/8MlutuUCIXpUzFo2bo3TvoZ4+VONrSQEHhWHeIQDDw==.
+info : Installed Microsoft.Extensions.Logging 3.1.28 from https://api.nuget.org/v3/index.json with content hash HxS9WAlcF45YjpU9OyLZ+PJkvXp+IM29shPO42yEKaarIpRXYTB/MYNMvSW4sZkVHBbeYhE1Wn68GTDntlA3oQ==.
+info : Installed Microsoft.Extensions.Configuration.Binder 3.1.28 from https://api.nuget.org/v3/index.json with content hash ucSpm8M6Utt9dfbcwOvqPJeATZZ0uYI+Y94IP1YKiBV6u6xPGzGafvjQDhcY5kTRW4FNwLcifesVjEdEOhY1qg==.
+info : Installed Microsoft.Extensions.Configuration 3.1.28 from https://api.nuget.org/v3/index.json with content hash q24T91N+GAgpHdc/yKR/fxIvNXekn6RIvpCXMEoM++37TMbkWVrhacQWP89+MJYNyIhAWOkJKlcgPZTndoYVfQ==.
+info : Installed Microsoft.EntityFrameworkCore 3.1.28 from https://api.nuget.org/v3/index.json with content hash tjbuKOYY1SWLvcL5R3PamILLBQTHIM4gLRLv2zxWE2YgHkRtiGcF0t/JYJr5hXpSkQWhqC9446Bx8q86rrt4Wg==.
+info : Installed Microsoft.Extensions.DependencyInjection 3.1.28 from https://api.nuget.org/v3/index.json with content hash lZ/5tLFTbOU/YhWNgtnT884fk4LwsTNXtkTrEZHUVvvvQGNYmseXra69b3RJD3f4UxMWN7Pwf36IA/l8PkNo3g==.
+warn : NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+error: NU1605: Detected package downgrade: Microsoft.EntityFrameworkCore from 5.0.17 to 3.1.28. Reference the package directly from the project to select a different version.
+error:  IDCardDemo -> Microsoft.EntityFrameworkCore.Design 5.0.17 -> Microsoft.EntityFrameworkCore.Relational 5.0.17 -> Microsoft.EntityFrameworkCore (>= 5.0.17)
+error:  IDCardDemo -> Microsoft.EntityFrameworkCore (>= 3.0.0)
+error: NU1605: Detected package downgrade: Microsoft.EntityFrameworkCore from 5.0.17 to 3.1.28. Reference the package directly from the project to select a different version.
+error:  IDCardDemo -> Microsoft.EntityFrameworkCore.Sqlite 5.0.17 -> Microsoft.EntityFrameworkCore.Sqlite.Core 5.0.17 -> Microsoft.EntityFrameworkCore.Relational 5.0.17 -> Microsoft.EntityFrameworkCore (>= 5.0.17)
+error:  IDCardDemo -> Microsoft.EntityFrameworkCore (>= 3.0.0)
+info : Package 'Microsoft.EntityFrameworkCore' is compatible with all the specified frameworks in project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : PackageReference for package 'Microsoft.EntityFrameworkCore' version '3.*' updated in file 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Committing restore...
+info : Writing assets file to disk. Path: C:\Users\Rob\source\repos\IDCardDemo\obj\project.assets.json
+log  : Failed to restore C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 1.51 sec).
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version=3.*
+  Determining projects to restore...
+  Writing C:\Users\Rob\AppData\Local\Temp\tmpC8BC.tmp
+info : Adding PackageReference for package 'Microsoft.EntityFrameworkCore.Sqlite' into project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Restoring packages for C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj...
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.diagnostics.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/3.1.28/microsoft.entityframeworkcore.sqlite.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/3.1.28/microsoft.entityframeworkcore.sqlite.3.1.28.nupkg 241ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite.core/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite.core/index.json 40ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite.core/3.1.28/microsoft.entityframeworkcore.sqlite.core.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite.core/3.1.28/microsoft.entityframeworkcore.sqlite.core.3.1.28.nupkg 54ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.data.sqlite.core/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.data.sqlite.core/index.json 45ms
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.data.sqlite.core/3.1.28/microsoft.data.sqlite.core.3.1.28.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.data.sqlite.core/3.1.28/microsoft.data.sqlite.core.3.1.28.nupkg 24ms
+info : Installed Microsoft.EntityFrameworkCore.Sqlite 3.1.28 from https://api.nuget.org/v3/index.json with content hash tJ9kbJfIsF9JDTkXNvV2ifjGuhrEKgbiuyXiV40Az4uiQiHpGyuHI3xcBNnX9ZDha1IYU/ggYIeEs96Y0ExKBA==.
+info : Installed Microsoft.EntityFrameworkCore.Sqlite.Core 3.1.28 from https://api.nuget.org/v3/index.json with content hash GQkAKUGChhOqnz6EouNnFNjLNkd3+9iTb4hKmu0ssZTTiTFz+Qp9lX3TsXB5zWlADvbLyor3mjYH+GoJBdGsmw==.
+info : Installed Microsoft.Data.Sqlite.Core 3.1.28 from https://api.nuget.org/v3/index.json with content hash P0MBJXYfyPLKb67DI97E2JyZeNHs3AG8JewXLSu6QCIXZXPz1e2Y8zDi9SeLFA4jHDC8fhsArCS5Nk7kKjPHUQ==.
+warn : NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+error: NU1605: Detected package downgrade: Microsoft.EntityFrameworkCore from 5.0.17 to 3.1.28. Reference the package directly from the project to select a different version.
+error:  IDCardDemo -> Microsoft.EntityFrameworkCore.Design 5.0.17 -> Microsoft.EntityFrameworkCore.Relational 5.0.17 -> Microsoft.EntityFrameworkCore (>= 5.0.17)
+error:  IDCardDemo -> Microsoft.EntityFrameworkCore (>= 3.0.0)
+info : Package 'Microsoft.EntityFrameworkCore.Sqlite' is compatible with all the specified frameworks in project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : PackageReference for package 'Microsoft.EntityFrameworkCore.Sqlite' version '3.*' updated in file 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Committing restore...
+info : Writing assets file to disk. Path: C:\Users\Rob\source\repos\IDCardDemo\obj\project.assets.json
+log  : Failed to restore C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 914 ms).
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet tool install --global dotnet-ef --framework netcoreapp3.1
+Tool 'dotnet-ef' is already installed.
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet tool install --global dotnet-aspnet-codegenerator --framework netcoreapp3.1
+Tool 'dotnet-aspnet-codegenerator' is already installed.
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design --version 3.1.5
+  Determining projects to restore...
+  Writing C:\Users\Rob\AppData\Local\Temp\tmpFE63.tmp
+info : Adding PackageReference for package 'Microsoft.VisualStudio.Web.CodeGeneration.Design' into project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Restoring packages for C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj...
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.diagnostics.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json
+warn : NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+error: NU1605: Detected package downgrade: Microsoft.EntityFrameworkCore from 5.0.17 to 3.1.28. Reference the package directly from the project to select a different version.
+error:  IDCardDemo -> Microsoft.EntityFrameworkCore.Design 5.0.17 -> Microsoft.EntityFrameworkCore.Relational 5.0.17 -> Microsoft.EntityFrameworkCore (>= 5.0.17)
+error:  IDCardDemo -> Microsoft.EntityFrameworkCore (>= 3.0.0)
+info : Package 'Microsoft.VisualStudio.Web.CodeGeneration.Design' is compatible with all the specified frameworks in project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : PackageReference for package 'Microsoft.VisualStudio.Web.CodeGeneration.Design' version '3.1.5' updated in file 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Committing restore...
+info : Assets file has not changed. Skipping assets file writing. Path: C:\Users\Rob\source\repos\IDCardDemo\obj\project.assets.json
+log  : Failed to restore C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 362 ms).
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet add package Microsoft.EntityFrameworkCore.Design --version=3.*
+  Determining projects to restore...
+  Writing C:\Users\Rob\AppData\Local\Temp\tmp596.tmp
+info : Adding PackageReference for package 'Microsoft.EntityFrameworkCore.Design' into project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Restoring packages for C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj...
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.diagnostics.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/index.json
+info :   GET https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/3.1.28/microsoft.entityframeworkcore.design.3.1.28.nupkg
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/3.1.28/microsoft.entityframeworkcore.design.3.1.28.nupkg 226ms
+info : Installed Microsoft.EntityFrameworkCore.Design 3.1.28 from https://api.nuget.org/v3/index.json with content hash xVDMKpLIgSek2fQzKfdMULvJx4HhSdSRvUhviRtN6DAdzpETt+I96p9lUGqiNWxYkxWwkRn2zwsfik95OML5Ag==.
+warn : NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+info : Package 'Microsoft.EntityFrameworkCore.Design' is compatible with all the specified frameworks in project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : PackageReference for package 'Microsoft.EntityFrameworkCore.Design' version '3.*' updated in file 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Committing restore...
+info : Generating MSBuild file C:\Users\Rob\source\repos\IDCardDemo\obj\IDCardDemo.csproj.nuget.g.props.
+info : Writing assets file to disk. Path: C:\Users\Rob\source\repos\IDCardDemo\obj\project.assets.json
+log  : Restored C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 671 ms).
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet add package Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore --version=3.1.*
+  Determining projects to restore...
+  Writing C:\Users\Rob\AppData\Local\Temp\tmpE03.tmp
+info : Adding PackageReference for package 'Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore' into project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Restoring packages for C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj...
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.diagnostics.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json
+warn : NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+info : Package 'Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore' is compatible with all the specified frameworks in project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : PackageReference for package 'Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore' version '3.1.*' updated in file 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Committing restore...
+info : Assets file has not changed. Skipping assets file writing. Path: C:\Users\Rob\source\repos\IDCardDemo\obj\project.assets.json
+log  : Restored C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 345 ms).
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet add package Microsoft.Extensions.Logging.Debug --framework netcoreapp3.1
+
+  Determining projects to restore...
+  Writing C:\Users\Rob\AppData\Local\Temp\tmp4BC7.tmp
+info : Adding PackageReference for package 'Microsoft.Extensions.Logging.Debug' into project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info :   GET https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.debug/index.json
+info :   OK https://api.nuget.org/v3/registration5-gz-semver2/microsoft.extensions.logging.debug/index.json 245ms
+info : Restoring packages for C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj...
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.diagnostics.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.design/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json
+warn : NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+info : Package 'Microsoft.Extensions.Logging.Debug' is compatible with all the specified frameworks in project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : PackageReference for package 'Microsoft.Extensions.Logging.Debug' version '6.0.0' updated in file 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Committing restore...
+info : Assets file has not changed. Skipping assets file writing. Path: C:\Users\Rob\source\repos\IDCardDemo\obj\project.assets.json
+log  : Restored C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 285 ms).
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet add package System.Drawing.Common --framework netcoreapp3.1
+  Determining projects to restore...
+  Writing C:\Users\Rob\AppData\Local\Temp\tmpFD45.tmp
+info : Adding PackageReference for package 'System.Drawing.Common' into project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info :   CACHE https://api.nuget.org/v3/registration5-gz-semver2/system.drawing.common/index.json
+info : Restoring packages for C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj...
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json
+info : Package 'System.Drawing.Common' is compatible with all the specified frameworks in project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : PackageReference for package 'System.Drawing.Common' version '6.0.0' added to file 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Committing restore...
+info : Writing assets file to disk. Path: C:\Users\Rob\source\repos\IDCardDemo\obj\project.assets.json
+log  : Restored C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 133 ms).
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet add package PdfSharp
+  Determining projects to restore...
+  Writing C:\Users\Rob\AppData\Local\Temp\tmp600.tmp
+info : Adding PackageReference for package 'PdfSharp' into project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info :   CACHE https://api.nuget.org/v3/registration5-gz-semver2/pdfsharp/index.json
+info : Restoring packages for C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj...
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
+info :   CACHE https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore.sqlite/index.json
+warn : NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+info : Package 'PdfSharp' is compatible with all the specified frameworks in project 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : PackageReference for package 'PdfSharp' version '1.50.5147' added to file 'C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj'.
+info : Committing restore...
+info : Writing assets file to disk. Path: C:\Users\Rob\source\repos\IDCardDemo\obj\project.assets.json
+log  : Restored C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj (in 140 ms).
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet build
+Microsoft (R) Build Engine version 16.11.3+5d7fe36cf for .NET
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Determining projects to restore...
+C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj : warning NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project. [C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.sln]
+  All projects are up-to-date for restore.
+C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj : warning NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+  IDCardDemo -> C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\IDCardDemo.dll
+  IDCardDemo -> C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\IDCardDemo.Views.dll
+
+Build succeeded.
+
+C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj : warning NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project. [C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.sln]
+C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj : warning NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+    2 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.72
+PS C:\Users\Rob\source\repos\IDCardDemo> Select-String -Path "IDCardDemo.csproj" -Pattern "TargetFramework"
+
+IDCardDemo.csproj:4:    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+
+PS C:\Users\Rob\source\repos\IDCardDemo> cd wwwroot\js
+PS C:\Users\Rob\source\repos\IDCardDemo\wwwroot\js> Invoke-WebRequest https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js -OutFile signature_pad.min.js
+PS C:\Users\Rob\source\repos\IDCardDemo\wwwroot\js> ls
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet clean
+Microsoft (R) Build Engine version 16.11.3+5d7fe36cf for .NET
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 8/21/2022 10:12:30 PM.
+     1>Project "C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.sln" on node 1 (Clean target(s)).
+     1>ValidateSolutionConfiguration:
+         Building solution configuration "Debug|Any CPU".
+     1>Project "C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.sln" (1) is building "C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj" (2) on node 1 (Clean target(s)).
+     2>CoreClean:
+         Creating directory "obj\Debug\netcoreapp3.1\".
+     2>Done Building Project "C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj" (Clean target(s)).
+     1>Done Building Project "C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.sln" (Clean target(s)).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.53
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet build
+Microsoft (R) Build Engine version 16.11.3+5d7fe36cf for .NET
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Determining projects to restore...
+C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj : warning NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project. [C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.sln]
+  All projects are up-to-date for restore.
+C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj : warning NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+  IDCardDemo -> C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\IDCardDemo.dll
+  IDCardDemo -> C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\IDCardDemo.Views.dll
+
+Build succeeded.
+
+C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj : warning NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project. [C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.sln]
+C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj : warning NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+    2 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:04.80
+PS C:\Users\Rob\source\repos\IDCardDemo> dotnet run
+C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj : warning NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+C:\Users\Rob\source\repos\IDCardDemo\IDCardDemo.csproj : warning NU1701: Package 'PDFsharp 1.50.5147' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.
+info: Microsoft.Hosting.Lifetime[0]
+      Now listening on: https://localhost:5001
+info: Microsoft.Hosting.Lifetime[0]
+      Now listening on: http://localhost:5000
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\Users\Rob\source\repos\IDCardDemo
