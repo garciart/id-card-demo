@@ -1,6 +1,6 @@
 # ID Card Demo
 
-**NOTE** - This demo uses .NET Core 3.1. While .NET 6 has superceded .NET Core 3.1, and .NET Core 3.1 end-of-support date is December 13, 2022, we will use it, since not all servers support .NET 6 yet.
+>**NOTE** - This demo uses .NET Core 3.1. While .NET 6 has superceded .NET Core 3.1, and .NET Core 3.1 end-of-support date is December 13, 2022, we will use it, since not all servers support .NET 6 yet.
 
 >**NOTE** - This is a customization of the instructions found at https://docs.microsoft.com/en-us/aspnet/core/tutorials/razor-pages/razor-pages-start?view=aspnetcore-3.1&tabs=visual-studio-code.
 
@@ -50,7 +50,7 @@ dotnet add package Microsoft.EntityFrameworkCore --version=3.*
 dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version=3.*
 ```
 
-Add the **Entity Framework**:
+Add the **Entity Framework**, as well as the tools and packages needed for scaffolding:
 
 ```
 dotnet tool install --global dotnet-ef --framework netcoreapp3.1
@@ -84,14 +84,6 @@ Ensure the **Target Framework** is ```netcoreapp3.1```:
 Select-String -Path "IDCardDemo.csproj" -Pattern "TargetFramework"
 ```
 
-Download Szymon Nowak's excellent Signature Pad JavaScript library:
-
-```
-cd wwwroot\js
-Invoke-WebRequest https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js -OutFile signature_pad.min.js
-ls
-```
-
 Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open *Startup.cs*, and, in the ```ConfigureServices()``` method and, if the code exists, replace:
 
 ```
@@ -116,6 +108,12 @@ with...
 
 **NOTE** - The DefaultConnection string may be followed by a different alphanumeric set.
 
+Return to the application's home directory:
+
+```
+cd C:\Users\Rob\source\repos\IDCardDemo
+```
+
 Start the app using IIS:
 
 ```
@@ -124,15 +122,120 @@ dotnet build
 dotnet run
 ```
 
-Open a browser and navigate to http://localhost:5000/:
+Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001):
 
 ![First Run](card_demo_01_id.png)
 
 When finished, close the browser, then press [Ctrl]+[C] to continue.
 
+-----
+
+## Add a Model
+
+Return to the application's home directory:
+
+```
+cd C:\Users\Rob\source\repos\IDCardDemo
+```
+
+Create a directory named ```Models``` and navigate to it:
+
+```
+mkdir Models
+cd Models
+```
+
+Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, create a class named *Holder.cs*, and enter the following code:
+
+```
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace IDCardDemo.Models
+{
+    public class Holder
+    {
+        public int ID { get; set; }
+        public string LastName { get; set; }
+		public string FirstName { get; set; }
+		public string MI { get; set; }
+		[DataType(DataType.Date)]
+		public DateTime DOB { get; set; }
+		public string Gender { get; set; }
+		public string Height { get; set; }
+		public string EyeColor { get; set; }
+    }
+}
+```
+
+Save the file and navigate to the ```Data``` directory:
+
+```
+cd ..
+cd Data
+```
+
+Create a class named *IDCardDemoContext.cs*, and enter the following code:
+
+```
+using Microsoft.EntityFrameworkCore;
+
+namespace IDCardDemo.Data
+{
+    public class IDCardDemoContext : DbContext
+    {
+        public IDCardDemoContext (
+            DbContextOptions<IDCardDemoContext> options)
+            : base(options)
+        {
+        }
+
+        public DbSet<IDCardDemo.Models.Holder> Holder { get; set; }
+    }
+}
+```
+
+Save the file and go back to the root directory:
+
+```cd ..```
+
+Add the database connection string, ```"IDCardDemoContext": "Data Source=Holders.db"```, to *appsettings.json* and save the file:
+
+```
+  "ConnectionStrings": {
+    "DefaultConnection": "DataSource=app.db",
+	"IDCardDemoContext": "Data Source=Holders.db"
+  },
+```
+
+Modify the ```ConfigureServices``` method in *Startup.cs* and save the file:
+
+```
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlite(
+                    Configuration.GetConnectionString("DefaultConnection")));
+			services.AddDbContext<IDCardDemoContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("IDCardDemoContext")));
+```
+
+Build the project to verify there are no compilation errors.
+
+```
+dotnet build
+```
 
 
 
+
+Download Szymon Nowak's excellent Signature Pad JavaScript library:
+
+```
+cd wwwroot\js
+Invoke-WebRequest https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js -OutFile signature_pad.min.js
+ls
+```
 
 
 Applicant/Member - Create, Read, and Update (own info)

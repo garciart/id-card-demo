@@ -30,6 +30,8 @@ namespace IDCardDemo
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
+			services.AddDbContext<IDCardDemoContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("IDCardDemoContext")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
