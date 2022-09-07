@@ -226,6 +226,84 @@ Build the project to verify there are no compilation errors.
 dotnet build
 ```
 
+Open *Holder.cs*, and add input validation and pre-storage actions:
+
+```
+        public int ID { get; set; }
+
+        private string _lastName;
+        [Display(Name = "Last Name")]
+        // First character must be a letter
+        // Middle characters must be letters, numbers, spaces, apostrophes, dashes, or periods
+        // e.g., O'Brien, Smith-Jones, J.T., etc.
+        // Last character must be alphanumeric
+        // Minimum two characters, maximum 255 characters
+        [RegularExpression(@"^([A-Za-z]{1})([ \'\-.0-9A-Za-z]{0,253})([0-9A-Za-z.]{1})$", ErrorMessage = "Letters, numbers, spaces, apostrophes, dashes, and periods only.")]
+        [Required(ErrorMessage = "{0} required.")]
+        [StringLength(255, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 2)]
+
+        public string LastName
+        {
+            get { return _lastName; }
+            // Convert to uppercase before storing
+            set { _lastName = !String.IsNullOrEmpty(value) ? value.ToUpper() : value; }
+        }
+
+        private string _firstName;
+        [Display(Name = "First Name")]
+        // First character must be a letter
+        // Middle characters must be letters, numbers, spaces, apostrophes, dashes, or periods
+        // e.g., O'Brien, Smith-Jones, J.T., etc.
+        // Last character must be alphanumeric
+        // Minimum two characters, maximum 127 characters
+        [RegularExpression(@"^([A-Za-z]{1})([ \'\-.0-9A-Za-z]{0,125})([0-9A-Za-z.]{1})$", ErrorMessage = "Letters, numbers, spaces, apostrophes, dashes, and periods only.")]
+        [Required(ErrorMessage = "{0} required.")]
+        [StringLength(127, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 2)]
+        public string FirstName
+        {
+            get { return _firstName; }
+            // Convert to uppercase before storing
+            set { _firstName = !String.IsNullOrEmpty(value) ? value.ToUpper() : value; }
+        }
+
+        private string _mi;
+        [Display(Name = "MI")]
+        [RegularExpression(@"^[A-Z]{0,1}$", ErrorMessage = "Must be a capital letter.")]
+        [StringLength(1, ErrorMessage = "Middle Initial can only be one letter long.")]
+#nullable enable
+        public string? MI
+        {
+            get { return _mi; }
+            // Convert to uppercase before storing
+            set { _mi = !String.IsNullOrEmpty(value) ? value.ToUpper() : value; }
+        }
+#nullable disable
+
+        [DataType(DataType.Date)]
+        [Display(Name = "DOB")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Required(ErrorMessage = "Date of Birth required.")]
+        public DateTime DOB { get; set; }
+
+        [Display(Name = "Sex")]
+        [RegularExpression(@"^[MFN]{1}$", ErrorMessage = "Invalid Gender.")]
+        [Required(ErrorMessage = "Gender required.")]
+        [StringLength(1, ErrorMessage = "Gender can only be one letter long.")]
+        public string Gender { get; set; }
+
+        [Display(Name = "HT")]
+        [Range(24, 96, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+        [Required(ErrorMessage = "Height (in inches) required.")]
+        public string Height { get; set; }
+
+        [Display(Name = "Eyes")]
+        [RegularExpression("BLK|BLU|BRO|GRY|GRN|HAZ|MAR|MUL|PMK|UNK", ErrorMessage = "Invalid Eye Color")]
+        [Required(ErrorMessage = "Eye Color required.")]
+        public string EyeColor { get; set; }
+```
+
+
+
 
 
 
