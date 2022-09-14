@@ -27,11 +27,12 @@ namespace IDCardDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string appDBSource = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"App_Data\app.db");
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(
-                    Configuration.GetConnectionString("DefaultConnection")));
-			services.AddDbContext<IDCardDemoContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("IDCardDemoContext")));
+                options.UseSqlite(string.Format("DataSource={0}", appDBSource)));
+            string holdersDBSource = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"App_Data\Holders.db");
+            services.AddDbContext<IDCardDemoContext>(options =>
+                options.UseSqlite(string.Format("DataSource={0}", holdersDBSource)));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();

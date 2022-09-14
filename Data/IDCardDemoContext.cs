@@ -4,7 +4,7 @@ namespace IDCardDemo.Data
 {
     public class IDCardDemoContext : DbContext
     {
-        public IDCardDemoContext (
+        public IDCardDemoContext(
             DbContextOptions<IDCardDemoContext> options)
             : base(options)
         {

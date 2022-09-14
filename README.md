@@ -1,6 +1,6 @@
 # ID Card Demo
 
->**NOTE** - This demo uses .NET Core 3.1. While .NET 6 has superceded .NET Core 3.1, and .NET Core 3.1 end-of-support date is December 13, 2022, we will use it, since not all servers support .NET 6 yet.
+>**NOTE** - This demo uses .NET Core 3.1. While .NET 6 has superceded .NET Core 3.1, and .NET Core 3.1 end-of-support date is December 13, 2022, you will use it, since not all servers support .NET 6 yet.
 
 >**NOTE** - This is a customization of the instructions found at https://docs.microsoft.com/en-us/aspnet/core/tutorials/razor-pages/razor-pages-start?view=aspnetcore-3.1&tabs=visual-studio-code.
 
@@ -16,7 +16,7 @@ If not, download the latest version of .NET Core SDK 3.1 from https://dotnet.mic
 
 Enter the following commands to create a Razor web application that uses .NET Core 3.1 and individual authentication:
 
-**NOTE** - For portability, we will use individual authentication, which stores and manages user accounts in-app, instead of using an external authentication system, such as Windows Authentication or Azure Active Directory.
+**NOTE** - For portability, you will use individual authentication, which stores and manages user accounts in-app, instead of using an external authentication system, such as Windows Authentication or Azure Active Directory.
 
 ```
 cd C:\Users\Rob\source\repos
@@ -30,7 +30,7 @@ Verify you added the project to the solution and look at the file listing:
 
 ```
 dotnet sln list
-ls
+dir
 ```
 
 Generate a self-signed TLS certificate to use during development. Click **Yes** if any popup warnings appear:
@@ -40,7 +40,7 @@ dotnet dev-certs https --clean
 dotnet dev-certs https --trust
 ```
 
-Once again, for portability, I am using the **SQLite** database. To use SQLite, run the following commands:
+Once again, for portability, I am using a **SQLite** database. To use SQLite, run the following commands:
 
 ```
 dotnet remove package Microsoft.Data.Sqlite
@@ -74,7 +74,7 @@ Build the solution:
 dotnet build
 ```
 
-Ensure that the messages ```build succeeded``` and ```0 Error(s)``` appear.
+Ensure the ```build succeeded```, with ```0 Error(s)```.
 
 **NOTE** - You can safely ignore any warnings about PDFSharp. PDFSharp works with both the older .NET 4 framework and .NET Core 3.1.
 
@@ -84,7 +84,33 @@ Ensure the **Target Framework** is ```netcoreapp3.1```:
 Select-String -Path "IDCardDemo.csproj" -Pattern "TargetFramework"
 ```
 
-Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open *Startup.cs*, and, in the ```ConfigureServices()``` method and, if the code exists, replace:
+Next, ensure you are in the application's home directory:
+
+```
+cd C:\Users\Rob\source\repos\IDCardDemo
+```
+
+This web application uses several databases. The default database file, ```app.db```, holds information about who can log into the site, such as administrators and site managers. However, in order to update the database, these users must have permission to read and write to the database file and its parent directory. Since the root directory does not allow this, and the EntityFramework cannot create directories using the SQLite provider, create a sub-directory named ```App_Data``` in the ```IDCardDemo``` root directory to hold the database file:
+
+```
+mkdir App_Data
+```
+
+Look for ```app.db```:
+
+```
+dir app.db
+```
+
+If the database file already exists, move it to the ```App_Data``` directory:
+
+```
+move app.db App_Data
+```
+
+**NOTE** - Do not worry if ```app.db``` does not exist yet. The following steps will ensure the database file is written to ```App_Data```.
+
+Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open the ```Startup.cs``` file. In the ```ConfigureServices()``` method, replace:
 
 ```
 services.AddDbContext<ApplicationDbContext>(options =>
@@ -94,25 +120,22 @@ services.AddDbContext<ApplicationDbContext>(options =>
 with...
 
 ```
-services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+string appDBSource = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"App_Data\app.db");
+services.AddDbContext<ApplicationDbContext>(options => 
+    options.UseSqlite(string.Format("DataSource={0}", appDBSource)));
 ```
 
-In addition, open *appsettings.json*, and, under ```ConnectionStrings``` and, if the code exists, replace:
+**NOTE** - If the code does not exist, add the replacement code to the method.
 
-```"DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=DefaultConnection-b15b26cc-20ff-42ee-af0a-1984535d6682;Trusted_Connection=True;MultipleActiveResultSets=true"```
+**NOTE** - By calling ```Directory.GetCurrentDirectory()``` and ```Path.Combine``` methods, you ensure that the server looks for the database file in the correct directory.
 
-with...
-
-```"DefaultConnection": "Data Source=./holder.db;Password=<a password of your choice>"```
-
-**NOTE** - The DefaultConnection string may be followed by a different alphanumeric set.
-
-Return to the application's home directory:
+**NOTE** - If you want to encrypt the database, add the ```password``` keyword argument to the ```option``` command:
 
 ```
-cd C:\Users\Rob\source\repos\IDCardDemo
+options.UseSqlite(string.Format("DataSource={0};Password=<a password of your choice>", dataSource)));
 ```
+
+In addition, open ```appsettings.json```, and remove the ```ConnectionStrings``` node, if it exists.
 
 Start the app using IIS:
 
@@ -145,7 +168,7 @@ mkdir Models
 cd Models
 ```
 
-Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, create a class named *Holder.cs*, and enter the following code:
+Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, create a class named ```Holder.cs```, and enter the following code:
 
 ```
 using System;
@@ -155,8 +178,8 @@ namespace IDCardDemo.Models
 {
     public class Holder
     {
-        public int ID { get; set; }
-        public string LastName { get; set; }
+    public int ID { get; set; }
+    public string LastName { get; set; }
 		public string FirstName { get; set; }
 		public string MI { get; set; }
 		[DataType(DataType.Date)]
@@ -175,7 +198,7 @@ cd ..
 cd Data
 ```
 
-Create a class named *IDCardDemoContext.cs*, and enter the following code:
+Create a class named ```IDCardDemoContext.cs```, and enter the following code:
 
 ```
 using Microsoft.EntityFrameworkCore;
@@ -199,25 +222,18 @@ Save the file and go back to the root directory:
 
 ```cd ..```
 
-Add the database connection string, ```"IDCardDemoContext": "Data Source=Holders.db"```, to *appsettings.json* and save the file:
+Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open the ```Startup.cs``` file. In the ```ConfigureServices()``` method, add the following lines:
 
 ```
-  "ConnectionStrings": {
-    "DefaultConnection": "DataSource=app.db",
-	"IDCardDemoContext": "Data Source=Holders.db"
-  },
+string holdersDBSource = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"App_Data\Holders.db");
+services.AddDbContext<IDCardDemoContext>(options => 
+    options.UseSqlite(string.Format("DataSource={0}", holdersDBSource)));
 ```
 
-Modify the ```ConfigureServices``` method in *Startup.cs* and save the file:
+**NOTE** - If you want to encrypt the database, add the ```password``` keyword argument to the ```option``` command:
 
 ```
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(
-                    Configuration.GetConnectionString("DefaultConnection")));
-			services.AddDbContext<IDCardDemoContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("IDCardDemoContext")));
+options.UseSqlite(string.Format("DataSource={0};Password=<a password of your choice>", dataSource)));
 ```
 
 Build the project to verify there are no compilation errors.
@@ -226,7 +242,74 @@ Build the project to verify there are no compilation errors.
 dotnet build
 ```
 
-Open *Holder.cs*, and add input validation and pre-storage actions:
+.NET can "scaffold" the pages and code you need to create, read, update, and delete (CRUD) records. Enter the following command:
+
+```
+# dotnet-aspnet-codegenerator razorpage --model Holder --dataContext IDCardDemoContext --useDefaultLayout  --useSqlite -outDir Pages\Holders --referenceScriptLibraries
+dotnet-aspnet-codegenerator razorpage -m Holder -dc IDCardDemoContext -udl -sqlite -outDir Pages\Holders --referenceScriptLibraries
+```
+
+Create the initial database schema, based on the data types and information in the *Holder* model:
+
+```
+# dotnet ef migrations add --context IDCardDemoContext InitialCreate
+dotnet ef migrations add -c IDCardDemoContext InitialCreate
+# dotnet ef database update --context IDCardDemoContext
+dotnet ef database update -c IDCardDemoContext
+```
+
+This is called a ***migration***. Anytime you update the *Holder* class, you should perform a migration to update the database schema, as well.
+
+Start the app using IIS:
+
+```
+dotnet clean
+dotnet build
+dotnet run
+```
+
+Open a browser and navigate to http://localhost:5001/Holders/Create (or https://localhost:5001/Holders/Create):
+
+![Create Holder Page](card_demo_02_create_page.png)
+
+Fill in the text boxes and add a holder:
+
+**NOTE** - Enter everything in upper case, to keep the database uniform. Later, you will add a property to ensure data is stored in uppercase, regardless of the way it was entered.
+
+![Create Holder](card_demo_03_create.png)
+
+Once you click on **Create**, you will be redirected to a list of holders:
+
+![List Holders](card_demo_04_list.png)
+
+Click on **Details** to see information about the holder:
+
+![Holder Details](card_demo_05_details.png)
+
+Click on **Edit** and update the holder's height to 71 inches:
+
+![Edit Holder](card_demo_06_edit.png)
+
+Click on **Save**. Back at the **Index**, you will notice the holder's height has been updated:
+
+![Holder Updated](card_demo_07_update.png)
+
+Click on **Delete**:
+
+![Delete Holder](card_demo_08_delete.png)
+
+Once you click on **Delete**, you will be redirected to an empty list of holders:
+
+![Holder Deleted](card_demo_09_deleted.png)
+
+When finished, close the browser, then press [Ctrl]+[C] to continue.
+
+Creating the database, the schema, and the database entry pages used to take a long time. Today, migrations and scaffolding take care of much of the work for you. However, you can still customize the schema and pages to suit your needs, as you will do later on.
+
+
+----------
+
+Open ```Holder.cs```, and add input validation and pre-storage actions:
 
 ```
         public int ID { get; set; }
@@ -302,10 +385,32 @@ Open *Holder.cs*, and add input validation and pre-storage actions:
         public string EyeColor { get; set; }
 ```
 
+Create a ```web.config``` file and add the following lines:
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <location path="." inheritInChildApplications="false">
+    <system.webServer>
+      <handlers>
+        <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceType="Unspecified" />
+      </handlers>
+      <aspNetCore processPath=".\CardDemo.exe" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="inprocess">
+        <environmentVariables>
+          <environmentVariable name="ASPNETCORE_ENVIRONMENT" value="Development" />
+        </environmentVariables>
+      </aspNetCore>
+    </system.webServer>
+  </location>
+</configuration>
+```
 
 
+**NOTE** - After deploying to the server, ensure that the **Application pool group** permissions for the ```App_Data``` directory, and both the ```wwwroot/photos``` and ```wwwroot/temp``` directories, are set to read and write. For example:
 
+![Permissions](card_demo_0X_permissions.png)
 
+Otherwise, you may encounter a ```SqliteException: SQLite Error 14: 'unable to open database file'.``` error.
 
 Download Szymon Nowak's excellent Signature Pad JavaScript library:
 

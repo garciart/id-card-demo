@@ -1,7 +1,6 @@
 C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\appsettings.Development.json
 C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\appsettings.json
 C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\IDCardDemo.StaticWebAssets.xml
-C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\app.db
 C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\IDCardDemo.exe
 C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\IDCardDemo.deps.json
 C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\IDCardDemo.runtimeconfig.json
@@ -184,6 +183,11 @@ C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.TagHelpe
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.RazorCoreGenerate.cache
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\_ViewStart.cshtml.g.cs
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\Razor\Pages\Error.cshtml.g.cs
+C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\Razor\Pages\Holders\Create.cshtml.g.cs
+C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\Razor\Pages\Holders\Delete.cshtml.g.cs
+C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\Razor\Pages\Holders\Details.cshtml.g.cs
+C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\Razor\Pages\Holders\Edit.cshtml.g.cs
+C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\Razor\Pages\Holders\Index.cshtml.g.cs
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\Razor\Pages\Index.cshtml.g.cs
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\Razor\Pages\Privacy.cshtml.g.cs
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\Razor\Pages\Shared\_Layout.cshtml.g.cs
