@@ -304,7 +304,36 @@ Once you click on **Delete**, you will be redirected to an empty list of holders
 
 When finished, close the browser, then press [Ctrl]+[C] to continue.
 
-Creating the database, the schema, and the database entry pages used to take a long time. Today, migrations and scaffolding take care of much of the work for you. However, you can still customize the schema and pages to suit your needs, as you will do later on.
+Creating the database, the schema, and the database entry pages used to take a long time. Today, migrations and scaffolding take care of much of the work for you. However, you can still customize the schema and pages to suit your needs.
+
+For example, if you look at the list of card holders again, you will notice that there is no space between **LastName**, **FirstName**, and **EyeColor**. You can use ***Data Annotations*** to fix this:
+
+```
+
+public string LastName { get; set; }
+```
+
+
+
+
+Having to enter the ```Create``` or ```Index``` URLs, each time you need to make a change or look at a list of card holders, can get annoying. Save the files and go to the **Pages** directory:
+
+```
+cd Pages
+```
+
+Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open the ```Index.cshtml``` file. Add the following lines after the last line on the page:
+
+```
+<div>
+    <a asp-page="/Holders/Create">Add a Holder</a>
+    <br />
+    <a asp-page="/Holders/Index">List Holders</a>
+</div>
+```
+
+You may have noticed that instead of ```href```, you used ```asp-page```. Using **Razor tag helpers**, instead of regular HTML tags, take care of many things, such as correct routing, etc.
+
 
 
 ----------
