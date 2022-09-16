@@ -306,13 +306,24 @@ When finished, close the browser, then press [Ctrl]+[C] to continue.
 
 Creating the database, the schema, and the database entry pages used to take a long time. Today, migrations and scaffolding take care of much of the work for you. However, you can still customize the schema and pages to suit your needs.
 
-For example, if you look at the list of card holders again, you will notice that there is no space between **LastName**, **FirstName**, and **EyeColor**. You can use ***Data Annotations*** to fix this:
+For example, if you look at the list of card holders again, you will notice that there is no space between **LastName**, **FirstName**, and **EyeColor**. You cannot separate "Last" and "Name" in the code, but you can use ***Data Annotations*** to add a space when displayed:
 
 ```
-
+[Display(Name = "Last Name")]
 public string LastName { get; set; }
 ```
 
+You can also add other annotations to validate input, such as making an input required or preventing command and SQL injections, allowing only letters, spaces, apostrophes, dashes, and periods:
+
+```
+[Display(Name = "Last Name")]
+[Required(ErrorMessage = "{0} required.")]
+[RegularExpression(@"^([ '\-A-Za-z.]{1,255})$", ErrorMessage = "Letters, spaces, apostrophes, dashes, and periods only.")]
+[StringLength(127, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
+public string LastName { get; set; }
+```
+
+Therefore, change 
 
 
 
