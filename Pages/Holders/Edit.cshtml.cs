@@ -15,9 +15,36 @@ namespace IDCardDemo.Pages.Holders
     {
         private readonly IDCardDemo.Data.IDCardDemoContext _context;
 
+        // References to the HTML elements populated from the code-behind using loops, etc.
+        public IEnumerable<SelectListItem> Heights { get; set; }
+        public IEnumerable<SelectListItem> EyeColor { get; set; }
+
         public EditModel(IDCardDemo.Data.IDCardDemoContext context)
         {
             _context = context;
+
+            // Use loops to populate large dropdown lists
+            Heights = Enumerable.Range(24, 72).Select(x => new SelectListItem
+            {
+                Value = x.ToString(),
+                Text = String.Format("{0}\" ({1}\' {2}\")", x, (int)x / 12, x % 12),
+                Selected = x == 69,
+            });
+
+            Dictionary<string, string> EyeColorDict = new Dictionary<string, string>() {
+                { "BLK", "Black" },
+                { "BLU", "Blue" },
+                { "BRO", "Brown" },
+                { "GRY", "Grey" },
+                { "GRN", "Green" },
+                { "HAZ", "Hazel" },
+                { "MAR", "Maroon" },
+                { "MUL", "Multicolor" },
+                { "PNK", "Pink" },
+                { "UNK", "Unknown" }
+            };
+
+            EyeColor = new SelectList(EyeColorDict, "Key", "Value");
         }
 
         [BindProperty]

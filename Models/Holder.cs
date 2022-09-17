@@ -60,6 +60,7 @@ namespace IDCardDemo.Models
         [Display(Name = "DOB")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "Date of Birth required.")]
+        [NoFutureDOB(ErrorMessage="DOB cannot be in the future.")]
         public DateTime DOB { get; set; }
 
         /// <summary>
@@ -86,5 +87,18 @@ namespace IDCardDemo.Models
         [RegularExpression("BLK|BLU|BRO|GRY|GRN|HAZ|MAR|MUL|PMK|UNK", ErrorMessage = "Invalid Eye Color")]
         [Required(ErrorMessage = "Eye Color required.")]
         public string EyeColor { get; set; }
+    }
+
+    public class NoFutureDOB : ValidationAttribute
+    {
+        public override bool IsValid(object value)
+        {
+            var dateValue = value as DateTime? ?? new DateTime();
+            if (dateValue.Date > DateTime.Now.Date)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

@@ -13,13 +13,13 @@ namespace IDCardDemo.Migrations
                 {
                     ID = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    LastName = table.Column<string>(nullable: true),
-                    FirstName = table.Column<string>(nullable: true),
-                    MI = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(maxLength: 255, nullable: false),
+                    FirstName = table.Column<string>(maxLength: 127, nullable: false),
+                    MI = table.Column<string>(maxLength: 1, nullable: true),
                     DOB = table.Column<DateTime>(nullable: false),
-                    Gender = table.Column<string>(nullable: true),
-                    Height = table.Column<string>(nullable: true),
-                    EyeColor = table.Column<string>(nullable: true)
+                    Gender = table.Column<string>(maxLength: 1, nullable: false),
+                    Height = table.Column<string>(nullable: false),
+                    EyeColor = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
