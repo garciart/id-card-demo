@@ -1,4 +1,3 @@
-C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.csproj.AssemblyReference.cache
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.AssemblyInfoInputs.cache
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.AssemblyInfo.cs
@@ -202,3 +201,5 @@ C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.csproj.C
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.dll
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.pdb
 C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.genruntimeconfig.cache
+C:\Users\Rob\source\repos\IDCardDemo\bin\Debug\netcoreapp3.1\zxing.dll
+C:\Users\Rob\source\repos\IDCardDemo\obj\Debug\netcoreapp3.1\IDCardDemo.csproj.AssemblyReference.cache

@@ -3,14 +3,16 @@ using System;
 using IDCardDemo.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace IDCardDemo.Migrations
 {
     [DbContext(typeof(IDCardDemoContext))]
-    partial class IDCardDemoContextModelSnapshot : ModelSnapshot
+    [Migration("20220919003426_UpdateSchema")]
+    partial class UpdateSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

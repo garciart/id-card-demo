@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace IDCardDemo.Models
 {
@@ -11,13 +12,13 @@ namespace IDCardDemo.Models
         public int ID { get; set; }
 
         /// <summary>
-        /// <value>Property <c>LastName</c> is required; can contain letters, spaces, apostrophes, dashes, and periods only; and must be less than 255 characters in length.</value>
+        /// <value>Property <c>LastName</c> is required; can contain letters, spaces, apostrophes, dashes, and periods only; and must be less than 32 characters in length.</value>
         /// </summary>
         private string _lastName;
         [Display(Name = "Last Name")]
         [Required(ErrorMessage = "{0} required.")]
-        [RegularExpression(@"^([ '\-A-Za-z.]{1,255})$", ErrorMessage = "Letters, spaces, apostrophes, dashes, and periods only.")]
-        [StringLength(255, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
+        [RegularExpression(@"^([A-Za-z])([ '\-.A-Za-z]*)([A-Za-z])(\.?)$", ErrorMessage = "Letters, spaces, apostrophes, dashes, and periods only.")]
+        [StringLength(32, MinimumLength = 2, ErrorMessage = "{0} must be between {2} and {1} characters long.")]
         public string LastName {
             get => _lastName;
             // Convert to uppercase before storing
@@ -25,13 +26,13 @@ namespace IDCardDemo.Models
         }
 
         /// <summary>
-        /// <value>Property <c>FirstName</c> is required; can contain letters, spaces, apostrophes, dashes, and periods only; and must be less than 127 characters in length.</value>
+        /// <value>Property <c>FirstName</c> is required; can contain letters, spaces, apostrophes, dashes, and periods only; and must be less than 32 characters in length.</value>
         /// </summary>
         private string _firstName;
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "{0} required.")]
-        [RegularExpression(@"^([ '\-A-Za-z.]{1,127})$", ErrorMessage = "Letters, spaces, apostrophes, dashes, and periods only.")]
-        [StringLength(127, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
+        [RegularExpression(@"^([A-Za-z])([ '\-.A-Za-z]*)([A-Za-z])(\.?)$", ErrorMessage = "Letters, spaces, apostrophes, dashes, and periods only.")]
+        [StringLength(32, MinimumLength = 2, ErrorMessage = "{0} must be between {2} and {1} characters long.")]
         public string FirstName {
             get => _firstName;
             // Convert to uppercase before storing
@@ -43,8 +44,8 @@ namespace IDCardDemo.Models
         /// </summary>
         private string _mi;
         [Display(Name = "MI")]
-        [RegularExpression(@"^[A-Z]{0,1}$", ErrorMessage = "Must be a capital letter.")]
-        [StringLength(1, ErrorMessage = "Middle Initial can only be one letter long.")]
+        [RegularExpression(@"^[A-Z]?$", ErrorMessage = "Middle Initial must be a capital letter.")]
+        [StringLength(1, MinimumLength = 0, ErrorMessage = "Middle Initial must be between {2} and {1} characters long.")]
         #nullable enable
         public string? MI {
             get => _mi;
@@ -54,29 +55,28 @@ namespace IDCardDemo.Models
         #nullable disable
 
         /// <summary>
-        /// <value>Property <c>Middle Initial</c> is not required, but if present, it can only be a single capital letter.</value>
+        /// <value>Property <c>DOB</c> is required, and must be in yyyy-MM-dd format (e.g., 2001-06-12).</value>
         /// </summary>
         [DataType(DataType.Date)]
         [Display(Name = "DOB")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "Date of Birth required.")]
-        [NoFutureDOB(ErrorMessage="DOB cannot be in the future.")]
+        [NoFutureDOB(ErrorMessage="Date of Birth cannot be in the future.")]
         public DateTime DOB { get; set; }
 
         /// <summary>
         /// <value>Property <c>Gender</c> is required and must be a capital letter 'M', 'F', or 'N'.</value>
         /// </summary>
         [Display(Name = "Sex")]
-        [RegularExpression(@"^[MFN]{1}$", ErrorMessage = "Invalid Gender.")]
+        [RegularExpression(@"^[MFN]$", ErrorMessage = "Invalid Gender.")]
         [Required(ErrorMessage = "Gender required.")]
-        [StringLength(1, ErrorMessage = "Gender can only be one letter long.")]
         public string Gender { get; set; }
 
         /// <summary>
         /// <value>Property <c>Height</c> is required and must be an integer between 24 and 96.</value>
         /// </summary>
         [Display(Name = "HT")]
-        [Range(24, 96, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+        [Range(24, 96, ErrorMessage = "Height must be between {1} and {2} inches.")]
         [Required(ErrorMessage = "Height (in inches) required.")]
         public string Height { get; set; }
 
@@ -87,6 +87,24 @@ namespace IDCardDemo.Models
         [RegularExpression("BLK|BLU|BRO|GRY|GRN|HAZ|MAR|MUL|PMK|UNK", ErrorMessage = "Invalid Eye Color")]
         [Required(ErrorMessage = "Eye Color required.")]
         public string EyeColor { get; set; }
+
+        /// <summary>
+        /// <value>Property <c>PhotoPath</c> holds the filepath to the card holder's photo on the server.</value>
+        /// </summary>
+        [Display(Name = "Photo")]
+        public string PhotoPath { get; set; }
+
+        /// <summary>
+        /// <value>Property <c>SignaturePath</c> holds the filepath to the card holder's signature on the server.</value>
+        /// </summary>
+        [Display(Name = "Signature")]
+        public string SignaturePath { get; set; }
+
+        /// <summary>
+        /// <value>Property <c>PDF417Path</c> holds the filepath, on the server, to the PDF-417 barcode generated for the card holder.</value>
+        /// </summary>
+        [Display(Name = "PDF-417")]
+        public string PDF417Path { get; set; }
     }
 
     public class NoFutureDOB : ValidationAttribute

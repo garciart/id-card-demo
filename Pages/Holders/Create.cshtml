@@ -5,14 +5,18 @@
     ViewData["Title"] = "Create";
 }
 
+@Html.AntiForgeryToken()
+
 <h1>Create</h1>
 
 <h4>Holder</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
+        <h4 class="text-danger font-weight-bold font-weight-italic">@ViewData["Status"]</h4>
+        <h4>Fill out the form:</h4>
         <p>An asterisk (*) indicates a required field.</p>
-        <form method="post">
+        <form id="create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Holder.LastName" class="control-label"></label>*
@@ -53,10 +57,47 @@
                 <select asp-for="Holder.EyeColor" asp-items="Model.EyeColor" class="form-control"></select>
                 <span asp-validation-for="Holder.EyeColor" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
         </form>
+        <hr />
+        <h4>Take a photo:</h4>
+        <ol type="a">
+            <li><button onclick="cameraOn()">Turn on the camera</button></li>
+            <li>
+                <p>Center your face in the screen below:</p>
+                <div id="videoContainer">
+                    <div id="box"></div>
+                    <video id="webcamVideo" width="300" height="300" autoplay style="border:1px solid black;"></video>
+                </div>
+            </li>
+            <li><button onclick="takePhoto()">Take a photo</button></li>
+            <li>
+                <p>Review your photo:</p>
+                <canvas id="photoCanvas" width="300" height="300" style="border:1px solid black;">
+                    Your browser does not support the HTML5 canvas
+                    tag.
+                </canvas>
+            </li>
+            <li><button onclick="savePhoto()">Accept the photo</button></li>
+        </ol>
+        <hr />
+        <h4>Add a signature:</h4>
+        <button onclick="clearPad()">Clear the box</button>
+        <br />
+        <canvas class="my-2" id="signatureCanvas" width="320" height="120" style="border:1px solid black;">
+            Your browser does not support the HTML5 canvas
+            tag.
+        </canvas>
+        <br />
+        <button onclick="saveSignature()">Accept the signature</button>
+        <hr />
+        <h4>Add Holder:</h4>
+        <p class="p-2 bg-warning text-dark rounded">
+            Before pressing <b>Add Holder</b>, ensure you have filled in all the required fields,
+            and that you have accepted both a photo and signature. Otherwise, the page will reload,
+            and you will have to submit another photo and signature.
+        </p>
+        <input type="submit" value="Add Holder" form="create" />
+        <hr />
     </div>
 </div>
 
@@ -64,6 +105,9 @@
     <a asp-page="Index">Back to List</a>
 </div>
 
+<script type="text/javascript" src="~/js/photo.js" asp-append-version="true"></script>
+<script type="text/javascript" src="~/js/signature_pad.min.js" asp-append-version="true"></script>
+<script type="text/javascript" src="~/js/signature.js" asp-append-version="true"></script>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
