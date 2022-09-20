@@ -52,7 +52,7 @@ async function savePhoto() {
                 url: "Create?handler=SavePhoto",
                 data: JSON.stringify(imageData),
                 contentType: "application/json",
-                // Needed to allow the app to save files to the wwwroot
+                // Needed to allow the app to save files to wwwroot
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("XSRF-TOKEN",
                         $('input:hidden[name="__RequestVerificationToken"]').val());
@@ -80,13 +80,13 @@ async function updatePhoto() {
         if (cameraStatus && pictureTaken) {
             // Get the raw image data from the data URL, but remove the metadata
             let imageData = photoCanvas.toDataURL("image/png").replace("data:image/png;base64,", "");
-            // Send the data, as a string, to the SavePhoto() handler in the code behind
+            // Send the data, as a string, to the UpdatePhoto() handler in the code behind
             await $.ajax({
                 type: "POST",
                 url: "Edit?handler=UpdatePhoto",
                 data: JSON.stringify(imageData),
                 contentType: "application/json",
-                // Needed to allow the app to save files to the wwwroot
+                // Needed to allow the app to update files in wwwroot
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("XSRF-TOKEN",
                         $('input:hidden[name="__RequestVerificationToken"]').val());

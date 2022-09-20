@@ -51,4 +51,8 @@
     <None Include="wwwroot\docs\README.md" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\photos\" />
+  </ItemGroup>
+
 </Project>

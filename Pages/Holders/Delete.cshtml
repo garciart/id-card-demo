@@ -54,6 +54,24 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Holder.EyeColor)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Holder.SignaturePath)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="../photos/@Html.DisplayFor(model => model.Holder.SignaturePath)" alt=@Html.DisplayFor(model => model.Holder.SignaturePath) />
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Holder.PDF417Path)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="../photos/@Html.DisplayFor(model => model.Holder.PDF417Path)" alt=@Html.DisplayFor(model => model.Holder.PDF417Path) />
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Holder.PhotoPath)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="../photos/@Html.DisplayFor(model => model.Holder.PhotoPath)" alt=@Html.DisplayFor(model => model.Holder.PhotoPath) />
+        </dd>
     </dl>
     
     <form method="post">

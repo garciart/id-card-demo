@@ -5,6 +5,8 @@
     ViewData["Title"] = "Details";
 }
 
+@Html.AntiForgeryToken()
+
 <h1>Details</h1>
 
 <div>
@@ -53,7 +55,34 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Holder.EyeColor)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Holder.SignaturePath)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="../photos/@Html.DisplayFor(model => model.Holder.SignaturePath)" alt=@Html.DisplayFor(model => model.Holder.SignaturePath) />
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Holder.PDF417Path)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="../photos/@Html.DisplayFor(model => model.Holder.PDF417Path)" alt=@Html.DisplayFor(model => model.Holder.PDF417Path) />
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Holder.PhotoPath)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="../photos/@Html.DisplayFor(model => model.Holder.PhotoPath)" alt=@Html.DisplayFor(model => model.Holder.PhotoPath) />
+        </dd>
     </dl>
+</div>
+<div>
+    <form asp-page-handler="PrintCard" method="post">
+        <button formtarget="_blank">Print Card</button>
+        <input type="hidden" name="id" value="@Model.Holder.ID" />
+        <input asp-for="Holder.PhotoPath" class="form-control" hidden readonly />
+        <input asp-for="Holder.SignaturePath" class="form-control" hidden readonly />
+        <input asp-for="Holder.PDF417Path" class="form-control" hidden readonly />
+    </form>
 </div>
 <div>
     <a asp-page="./Edit" asp-route-id="@Model.Holder.ID">Edit</a> |

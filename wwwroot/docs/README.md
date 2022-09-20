@@ -1,5 +1,24 @@
 # ID Card Demo
 
+```
+## Setup
+## Add a Model
+## Add Card Holder Administration Pages
+## Add Validation
+## Customize Input Elements
+## Add Links to Main Page
+## Add JavaScript
+## Add New Fields to the Model
+## Update the Card Holder Pages
+### Create
+### Edit
+### Details
+### Delete
+## Add CSS
+## Test the Photo and Signature Code
+## Add Printing
+```
+
 >**NOTE** - This demo uses .NET Core 3.1. While .NET 6 has superceded .NET Core 3.1, and .NET Core 3.1 end-of-support date is December 13, 2022, you will use it, since not all servers support .NET 6 yet.
 
 >**NOTE** - This is a customization of the instructions found at https://docs.microsoft.com/en-us/aspnet/core/tutorials/razor-pages/razor-pages-start?view=aspnetcore-3.1&tabs=visual-studio-code.
@@ -699,44 +718,11 @@ Open a browser and navigate to http://localhost:5001/Holders (or https://localho
 
 -----
 
-## Add a Signature Pad and Photo Taker
+## Add JavaScript
 
-**NOTE** - Here comes a lot of code! Save often!
+You still need to add some items to the ID card, such as a signature and a photo. To do complete these tasks, you will use JavaScript.
 
-**NOTE** - If added any holders, delete them before continuing.
-
-You still need to add some items to the ID card, such as a signature and a photo.
-
-Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open the ```Holder.cs``` file, and add the following lines at the end of the **Holder** class:
-
-```
-/// <summary>
-/// <value>Property <c>PhotoPath</c> holds the filepath to the card holder's photo on the server.</value>
-/// </summary>
-[Display(Name = "Photo")]
-public string PhotoPath { get; set; }
-
-/// <summary>
-/// <value>Property <c>SignaturePath</c> holds the filepath to the card holder's signature on the server.</value>
-/// </summary>
-[Display(Name = "Signature")]
-public string SignaturePath { get; set; }
-
-/// <summary>
-/// <value>Property <c>PDF417Path</c> holds the filepath, on the server, to the PDF-417 barcode generated for the card holder.</value>
-/// </summary>
-[Display(Name = "PDF-417")]
-public string PDF417Path { get; set; }
-```
-
-Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open the ```Startup.cs``` file. In the ```ConfigureServices()``` method, add the following lines:
-
-```
-// Needed to allow the app to save files to the wwwroot
-services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
-```
-
-Go to the ```wwwroot``` directory and create the subdirectories you will need:
+Go to the ```wwwroot``` directory and create the sub-directories you will need:
 
 ```
 cd wwwroot
@@ -745,17 +731,19 @@ mkdir temp
 mkdir images
 ```
 
+In the ```wwwroot``` directory, go to the JavaScript sub-directory:
+
 **NOTE** - When you eventually deploy your web application, **```wwwroot```** will be the *accessible* part of your site, where you can store files. All your other code, with the exception of ```App_Data```, will be compiled into a single executable file, named ***idcardemo.exe***.
 
-Go to the JavaScript directory and download Szymon Nowak's excellent Signature Pad JavaScript program:
+```cd wwwroot/js```
+
+Download Szymon Nowak's excellent Signature Pad JavaScript program:
 
 ```
-cd js
 Invoke-WebRequest https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js -OutFile signature_pad.min.js
-ls
 ```
 
-In the same directory, create file named ```signature.js```, and add the following code:
+In the same directory, using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, create a file named ```signature.js```, and add the following code:
 
 ```
 var pad = new SignaturePad(signatureCanvas);
@@ -780,7 +768,7 @@ async function saveSignature() {
             url: "Create?handler=SaveSignature",
             data: JSON.stringify(imageData),
             contentType: "application/json",
-            // Needed to allow the app to save files to the wwwroot
+            // Needed to allow the app to save files to wwwroot
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("XSRF-TOKEN",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
@@ -800,19 +788,19 @@ async function updateSignature() {
     try {
         // Get the raw image data from the data URL, but remove the metadata
         let imageData = signatureCanvas.toDataURL("image/png").replace("data:image/png;base64,", "");
-        // Send the data, as a string, to the SaveSignature() handler in the code behind
+        // Send the data, as a string, to the UpdateSignature() handler in the code behind
         await $.ajax({
             type: "POST",
             url: "Edit?handler=UpdateSignature",
             data: JSON.stringify(imageData),
             contentType: "application/json",
-            // Needed to allow the app to save files to the wwwroot
+            // Needed to allow the app to update files in wwwroot
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("XSRF-TOKEN",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
             },
             success: function (msg) {
-				console.log("Signature updated: " + msg);
+                console.log("Signature updated: " + msg);
                 alert("Signature updated!");
             },
         });
@@ -823,7 +811,7 @@ async function updateSignature() {
 }
 ```
 
-In the same directory, create file named ```photo.js```, and add the following code:
+In the same directory, create a file named ```photo.js``` and add the following code:
 
 ```
 var cameraStatus = false;
@@ -880,7 +868,7 @@ async function savePhoto() {
                 url: "Create?handler=SavePhoto",
                 data: JSON.stringify(imageData),
                 contentType: "application/json",
-                // Needed to allow the app to save files to the wwwroot
+                // Needed to allow the app to save files to wwwroot
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("XSRF-TOKEN",
                         $('input:hidden[name="__RequestVerificationToken"]').val());
@@ -908,24 +896,24 @@ async function updatePhoto() {
         if (cameraStatus && pictureTaken) {
             // Get the raw image data from the data URL, but remove the metadata
             let imageData = photoCanvas.toDataURL("image/png").replace("data:image/png;base64,", "");
-            // Send the data, as a string, to the SavePhoto() handler in the code behind
+            // Send the data, as a string, to the UpdatePhoto() handler in the code behind
             await $.ajax({
                 type: "POST",
                 url: "Edit?handler=UpdatePhoto",
                 data: JSON.stringify(imageData),
                 contentType: "application/json",
-                // Needed to allow the app to save files to the wwwroot
+                // Needed to allow the app to update files in wwwroot
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("XSRF-TOKEN",
                         $('input:hidden[name="__RequestVerificationToken"]').val());
                 },
                 success: function (msg) {
-					console.log("Photo updated: " + msg);
+                    console.log("Photo updated: " + msg);
                     alert("Photo updated.");
                 }
             });
             cameraOff();
-			pictureTaken = false;
+            pictureTaken = false;
         }
         else {
             console.log("No picture taken!");
@@ -955,7 +943,55 @@ async function cameraOff() {
 }
 ```
 
-Return to the root directory, and navigate to ```Pages/Holders```. Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open the ```Create.cshtml``` and ```Create.cshtml.cs``` files.
+## Add New Fields to the Model
+
+**NOTE** - If you added any card holders, run the application and delete them before continuing.
+
+Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open the ```Holder.cs``` file, and add the following lines at the end of the **Holder** class:
+
+```
+/// <summary>
+/// <value>Property <c>PhotoPath</c> holds the filepath to the card holder's photo on the server.</value>
+/// </summary>
+[Display(Name = "Photo")]
+public string PhotoPath { get; set; }
+
+/// <summary>
+/// <value>Property <c>SignaturePath</c> holds the filepath to the card holder's signature on the server.</value>
+/// </summary>
+[Display(Name = "Signature")]
+public string SignaturePath { get; set; }
+
+/// <summary>
+/// <value>Property <c>PDF417Path</c> holds the filepath, on the server, to the PDF-417 barcode generated for the card holder.</value>
+/// </summary>
+[Display(Name = "PDF-417")]
+public string PDF417Path { get; set; }
+```
+
+Update the database:
+
+**NOTE** - Since you are adding columns, but not altering them, you do not have to recreate the database.
+
+```
+dotnet ef migrations add -c IDCardDemoContext UpdateSchema
+dotnet ef database update -c IDCardDemoContext
+```
+
+## Update the Card Holder Pages
+
+**NOTE** - Here comes a lot of code! Save often!
+
+Return to the root directory, and, using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open the ```Startup.cs``` file. In the ```ConfigureServices()``` method, add the following lines:
+
+```
+// Needed to allow the app to save files to the wwwroot
+services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
+```
+
+### Create
+
+Navigate to ```Pages/Holders``` and open the ```Create.cshtml.cs``` file.
 
 Import the following reference (at the top of the file):
 
@@ -990,6 +1026,7 @@ Add the following two methods after the property binding (```public Holder Holde
 // Method to save temp photo using Ajax
 // Remember to prepend OnPost to method name
 public JsonResult OnPostSavePhoto([FromBody] string imageData) {
+	if (String.IsNullOrWhiteSpace(imageData)) return null;
 	byte[] data = Convert.FromBase64String(imageData);
 	string filepath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
 	System.IO.File.WriteAllBytes(filepath, data);
@@ -1000,17 +1037,18 @@ public JsonResult OnPostSavePhoto([FromBody] string imageData) {
 
 // Method to save temp signature using Ajax
 // Remember to prepend OnPost to method name
-public void OnPostSaveSignature([FromBody] string imageData) {
-	if (String.IsNullOrWhiteSpace(imageData)) return;
+public JsonResult OnPostSaveSignature([FromBody] string imageData) {
+	if (String.IsNullOrWhiteSpace(imageData)) return null;
 	byte[] data = Convert.FromBase64String(imageData);
 	string filepath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
 	System.IO.File.WriteAllBytes(filepath, data);
 	Holder.SignaturePath = filepath;
 	signatureUploaded = true;
+	return new JsonResult(filepath);
 }
 ```
 
-Change the code in the ```public async Task<IActionResult> OnPostAsync()``` method to the following:
+Change the code in the ```OnPostAsync``` method to the following:
 
 ```
 public async Task<IActionResult> OnPostAsync() {
@@ -1035,7 +1073,7 @@ public async Task<IActionResult> OnPostAsync() {
 		string timeStamp = DateTime.Now.ToString("yyyMMddHHmmss");
 		string userFileName = String.Format("{0}_{1}_{2}", fixedLastName.ToLower(), fixedFirstName.ToLower(), timeStamp);
 
-		// Copy the temp images to photo folder and rename them using the member data
+		// Copy the temp images to photo folder and rename them using the holder data
 		string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
 		Holder.PhotoPath = String.Format("{0}_photo.png", userFileName);
 		System.IO.File.Copy(photoImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath), true);
@@ -1101,7 +1139,7 @@ public static string RemoveSpecialCharacters(string str) {
 }
 ```
 
-In ```Create.cshtml```, right above ```<h1>Create</h1>```, add the following line:
+Open ```Create.cshtml```, and, right above ```<h1>Create</h1>```, add the following line:
 
 ```
 @Html.AntiForgeryToken()
@@ -1122,7 +1160,7 @@ with...
 
 ```<form id="create" method="post">```
 
-Near the bottom, replace everything after ```<div class="form-group">``` with:
+Near the bottom, replace everything after the last ```<div class="form-group">``` with:
 
 ```
         </form>
@@ -1134,15 +1172,14 @@ Near the bottom, replace everything after ```<div class="form-group">``` with:
                 <p>Center your face in the screen below:</p>
                 <div id="videoContainer">
                     <div id="box"></div>
-                    <video id="webcamVideo" width="300" height="300" autoplay style="border:1px solid black;"></video>
+                    <video id="webcamVideo" width="300" height="300" autoplay></video>
                 </div>
             </li>
             <li><button onclick="takePhoto()">Take a photo</button></li>
             <li>
                 <p>Review your photo:</p>
-                <canvas id="photoCanvas" width="300" height="300" style="border:1px solid black;">
-                    Your browser does not support the HTML5 canvas
-                    tag.
+                <canvas id="photoCanvas" width="300" height="300"">
+                    Your browser does not support the HTML5 canvas tag.
                 </canvas>
             </li>
             <li><button onclick="savePhoto()">Accept the photo</button></li>
@@ -1151,9 +1188,8 @@ Near the bottom, replace everything after ```<div class="form-group">``` with:
         <h4>Add a signature:</h4>
         <button onclick="clearPad()">Clear the box</button>
         <br />
-        <canvas class="my-2" id="signatureCanvas" width="320" height="120" style="border:1px solid black;">
-            Your browser does not support the HTML5 canvas
-            tag.
+        <canvas class="my-2" id="signatureCanvas" width="320" height="120">
+            Your browser does not support the HTML5 canvas tag.
         </canvas>
         <br />
         <button onclick="saveSignature()">Accept the signature</button>
@@ -1181,14 +1217,594 @@ Near the bottom, replace everything after ```<div class="form-group">``` with:
 }
 ```
 
-Update the database:
+### Edit
 
-**NOTE** - Since you are adding columns, but not altering them, you do not have to recreate the database.
+Open the ```Edit.cshtml.cs``` file.
+
+Import the following reference (at the top of the file):
 
 ```
-dotnet ef migrations add -c IDCardDemoContext UpdateSchema
-dotnet ef database update -c IDCardDemoContext
+using Microsoft.AspNetCore.Hosting;
+using System.Drawing;
+using System.IO;
+using System.Text;
+using ZXing;
 ```
+
+Add the following instance variables to the class, and modify the ```EditModel``` method's arguments:
+
+```
+// Status flags
+private static bool photoUploaded = false;
+private static bool signatureUploaded = false;
+private static string status;
+
+// Holds the root filepath of the web application; used for saves, etc.
+private readonly IWebHostEnvironment _environment;
+
+public EditModel(IDCardDemo.Data.IDCardDemoContext context, IWebHostEnvironment environment)
+{
+    _context = context;
+    _environment = environment;
+```
+
+Add the following two methods after the property binding (```public Holder Holder { get; set; }```):
+
+```
+// Method to update temp photo using Ajax
+// Remember to prepend OnPost to method name
+public JsonResult OnPostUpdatePhoto([FromBody] string imageData) {
+	if (String.IsNullOrWhiteSpace(imageData)) return null;
+	byte[] data = Convert.FromBase64String(imageData);
+	string filepath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
+	System.IO.File.WriteAllBytes(filepath, data);
+	Holder.PhotoPath = filepath;
+	photoUploaded = true;
+	return new JsonResult(filepath);
+}
+
+// Method to update temp signature using Ajax
+// Remember to prepend OnPost to method name
+public JsonResult OnPostUpdateSignature([FromBody] string imageData) {
+	if (String.IsNullOrWhiteSpace(imageData)) return null;
+	byte[] data = Convert.FromBase64String(imageData);
+	string filepath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
+	System.IO.File.WriteAllBytes(filepath, data);
+	Holder.SignaturePath = filepath;
+	signatureUploaded = true;
+	return new JsonResult(filepath);
+}
+```
+
+Change the code in the ```OnPostAsync``` method to the following:
+
+```
+public async Task<IActionResult> OnPostAsync() {
+	try {
+		if (!ModelState.IsValid) {
+			status = "Invalid information!";
+			// Reset the flags and return the page with errors identified
+			// The model validation fields will populate the error messages automatically
+			photoUploaded = false;
+			signatureUploaded = false;
+			return Page();
+		}
+
+		// Create the filename prefix
+		string fixedLastName = RemoveSpecialCharacters(Holder.LastName.ToLower());
+		string fixedFirstName = RemoveSpecialCharacters(Holder.FirstName.ToLower());
+		string timeStamp = DateTime.Now.ToString("yyyMMddHHmmss");
+		string userFileName = String.Format("{0}_{1}_{2}", fixedLastName.ToLower(), fixedFirstName.ToLower(), timeStamp);
+
+		// Rename image files if the member's LastName or FirstName fields changed
+		if (!Holder.PhotoPath.StartsWith(userFileName)) {
+			System.IO.File.Move(
+				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath),
+				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_photo.png", userFileName))
+				);
+			Holder.PhotoPath = String.Format("{0}_photo.png", userFileName);
+
+			System.IO.File.Move(
+				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath),
+				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_sign.png", userFileName))
+				);
+			Holder.SignaturePath = String.Format("{0}_sign.png", userFileName);
+
+			System.IO.File.Move(
+				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path),
+				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_code.png", userFileName))
+				);
+			Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
+		}
+
+		// Update images if new ones were made
+		if (photoUploaded) {
+			// Copy the temp images to photo folder and rename them using the member data
+			string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
+			Holder.PhotoPath = String.Format("{0}_photo.png", userFileName);
+			System.IO.File.Copy(photoImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath), true);
+		}
+
+		if (signatureUploaded) {
+			string signatureImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
+			Holder.SignaturePath = String.Format("{0}_sign.png", userFileName);
+			System.IO.File.Copy(signatureImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath), true);
+		}
+
+		// Prepare barcode info
+		string memberInfo = String.Format("{0},{1},{2},{3},{4},{5},{6},{7}",
+		 Holder.LastName.ToUpper(),
+		 Holder.FirstName.ToUpper(),
+		 String.IsNullOrEmpty(Holder.MI) ? "" : Holder.MI.ToUpper(),
+		 "1 MAIN ST ANY TOWN MD 12345-0000",
+		 Holder.DOB.ToString("MM/dd/yyyy"),
+		 Holder.Gender.ToUpper(),
+		 Holder.Height,
+		 Holder.EyeColor);
+		// Create and save barcode
+		// http://stackoverflow.com/questions/13289742/zxing-net-encode-string-to-qr-code-in-cf //
+		BarcodeWriter writer = new BarcodeWriter {
+			Format = BarcodeFormat.PDF_417,
+			Options = { Width = 342, Height = 100 },
+		};
+		Bitmap barcodeBitmap;
+		writer.Options.Margin = 0;
+		barcodeBitmap = writer.Write(memberInfo);
+		Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
+		barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
+		barcodeBitmap.Dispose();
+
+		_context.Attach(Holder).State = EntityState.Modified;
+
+		try {
+			await _context.SaveChangesAsync();
+		}
+		catch (DbUpdateConcurrencyException e) {
+			status = String.Format("Could not update record: {0}", e);
+			if (!HolderExists(Holder.ID)) {
+				return NotFound();
+			}
+			else {
+				throw;
+			}
+		}
+
+		int holderID = Holder.ID;
+		ModelState.Clear();
+		return RedirectToPage("./Details", new { id = holderID });
+	}
+	catch (Exception e) {
+		status = String.Format("Could not update record: {0}", e);
+		return Page();
+	}
+	finally {
+		ViewData["Status"] = status;
+		photoUploaded = false;
+		signatureUploaded = false;
+	}
+}
+```
+
+Add the following method after ```OnPostAsync```:
+
+```
+// Special thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
+public static string RemoveSpecialCharacters(string str) {
+	StringBuilder sb = new StringBuilder();
+	foreach (char c in str) {
+		if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+			sb.Append(c);
+		}
+	}
+	return sb.ToString();
+}
+```
+
+Open ```Edit.cshtml```, and, right above ```<h1>Edit</h1>```, add the following line:
+
+```
+@Html.AntiForgeryToken()
+```
+
+Right above ```<p>An asterisk (*) indicates a required field.</p>```, add the following line:
+
+```
+<h4 class="text-danger font-weight-bold font-weight-italic">@ViewData["Status"]</h4>
+<h4>Fill out the form:</h4>
+```
+
+Replace...
+
+```<form method="post">```
+
+with...
+
+```<form id="edit" method="post">```
+
+Near the bottom, replace everything after the last ```<div class="form-group">``` with:
+
+```
+            <input asp-for="Holder.PhotoPath" class="form-control" hidden readonly />
+            <input asp-for="Holder.SignaturePath" class="form-control" hidden readonly />
+            <input asp-for="Holder.PDF417Path" class="form-control" hidden readonly />
+        </form>
+        <hr />
+        <h4>Current Photo:</h4>
+        <br />
+        <img src="../photos/@Html.DisplayFor(model => model.Holder.PhotoPath)" alt=@Html.DisplayFor(model =>
+                    model.Holder.PhotoPath) />
+        <br />
+        <br />
+        <h4>Update photo:</h4>
+        <ol type="a">
+            <li><button onclick="cameraOn()">Turn on the camera</button></li>
+            <li>
+                <p>Center your face in the screen below:</p>
+                <div id="videoContainer">
+                    <div id="box"></div>
+                    <video id="webcamVideo" width="300" height="300" autoplay></video>
+                </div>
+            </li>
+            <li><button onclick="takePhoto()">Take a photo</button></li>
+            <li>
+                <p>Review your photo:</p>
+                <canvas id="photoCanvas" width="300" height="300">
+                    Your browser does not support the HTML5 canvas tag.
+                </canvas>
+            </li>
+            <li><button onclick="updatePhoto()">Update the photo</button></li>
+        </ol>
+        <hr />
+        <h4>Current Signature:</h4>
+        <br />
+        <img src="../photos/@Html.DisplayFor(model => model.Holder.SignaturePath)" alt=@Html.DisplayFor(model =>
+                    model.Holder.SignaturePath) />
+        <br />
+        <br />
+        <h4>Update signature:</h4>
+        <button onclick="clearPad()">Clear the box</button>
+        <br />
+        <canvas class="my-2" id="signatureCanvas" width="320" height="120">
+            Your browser does not support the HTML5 canvas tag.
+        </canvas>
+        <br />
+        <button onclick="updateSignature()">Update the signature</button>
+        <hr />
+        <h4>Add Holder:</h4>
+        <p class="p-2 bg-warning text-dark rounded">
+            Before pressing <b>Update Holder</b>, ensure you have filled in all the required fields,
+            and, if applicable, you have accepted any changed photo or signature.
+            Otherwise, the page will reload, and you will have to submit another photo and signature.
+        </p>
+        <input type="submit" value="Update Holder" form="edit" />
+        <hr />
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+<script type="text/javascript" src="~/js/photo.js" asp-append-version="true"></script>
+<script type="text/javascript" src="~/js/signature_pad.min.js" asp-append-version="true"></script>
+<script type="text/javascript" src="~/js/signature.js" asp-append-version="true"></script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+```
+
+### Details
+
+Open ```Details.cshtml```, and, right above ```<h1>Details</h1>```, add the following line:
+
+```
+@Html.AntiForgeryToken()
+```
+
+Right after the last description item (should be ```EyeColor```, add the following lines:
+
+```
+<dt class="col-sm-2">
+	@Html.DisplayNameFor(model => model.Member.SignaturePath)
+</dt>
+<dd class="col-sm-10">
+	<img src="../photos/@Html.DisplayFor(model => model.Member.SignaturePath)" alt=@Html.DisplayFor(model => model.Member.SignaturePath) />
+</dd>
+<dt class="col-sm-2">
+	@Html.DisplayNameFor(model => model.Member.PDF417Path)
+</dt>
+<dd class="col-sm-10">
+	<img src="../photos/@Html.DisplayFor(model => model.Member.PDF417Path)" alt=@Html.DisplayFor(model => model.Member.PDF417Path) />
+</dd>
+<dt class="col-sm-2">
+	@Html.DisplayNameFor(model => model.Member.PhotoPath)
+</dt>
+<dd class="col-sm-10">
+	<img src="../photos/@Html.DisplayFor(model => model.Member.PhotoPath)" alt=@Html.DisplayFor(model => model.Member.PhotoPath) />
+</dd>
+```
+
+### Delete
+
+Open the ```Delete.cshtml.cs``` file.
+
+Import the following reference (at the top of the file):
+
+```
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+```
+
+
+Add the following instance variables to the class, and modify the ```DeleteModel``` method's arguments:
+
+```
+// Holds the root filepath of the web application; used for saves, etc.
+private readonly IWebHostEnvironment _environment;
+
+public DeleteModel(IDCardDemo.Data.IDCardDemoContext context, IWebHostEnvironment environment)
+{
+    _context = context;
+    _environment = environment;
+}
+```
+
+In between ```_context.Holder.Remove(Holder);``` and ```await _context.SaveChangesAsync();```, add the following lines:
+
+```
+System.IO.File.Delete(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path));
+System.IO.File.Delete(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath));
+System.IO.File.Delete(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath));
+```
+
+## Add CSS
+
+In both ```Create.cshtml``` and ```Edit.cshtml```, using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, add the following lines after ```@Html.AntiForgeryToken()```:
+
+```
+<link rel="stylesheet" href="~/css/photo.css" />
+<link rel="stylesheet" href="~/css/signature.css" />
+```
+
+Navigate to ```wwwroot/css``` and,  create a file named ```photo.css```, and add the following code:
+
+```
+#photoCanvas,
+#webcamVideo {
+    background-color: black;
+}
+
+#videoContainer {
+    position: relative;
+}
+
+#box {
+    width: 200px;
+    height: 200px;
+    border: 1px dashed red;
+    position: absolute;
+    left: 50px;
+    top: 50px;
+}
+```
+
+In the same directory, create a file named ```signature.css```, and add the following code:
+
+```
+#signatureCanvas {
+    border: 1px solid black;
+}
+```
+
+## Test the Photo and Signature Code
+
+Start the app using IIS:
+
+```
+dotnet clean
+dotnet build
+dotnet run
+```
+
+Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001):
+
+
+![Add a Photo](card_demo_17_add_photo.png)
+
+-----
+
+![Adda Signature](card_demo_18_add_signature.png)
+
+-----
+
+![New Details Page](card_demo_19_new_details.png)
+
+-----
+
+![New Update Page](card_demo_20_new_update.png)
+
+-----
+
+![New Delete Page](card_demo_21_new_delete.png)
+
+When finished, close the browser, then press [Ctrl]+[C] to continue.
+
+-----
+
+## Add Printing
+
+Get the following files from this repository:
+
+```
+images\id_card_front.png
+images\id_card_back.png
+images\no_picture.png
+```
+
+Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open ```Details.cshtml```, and replace the last ```<div>``` element with:
+
+```
+<div>
+    <form asp-page-handler="PrintCard" method="post">
+        <buttonformtarget="_blank">Print Card</button>
+        <input type="hidden" name="id" value="@Model.Holder.ID" />
+		<input asp-for="Holder.PhotoPath" class="form-control" hidden readonly />
+		<input asp-for="Holder.SignaturePath" class="form-control" hidden readonly />
+		<input asp-for="Holder.PDF417Path" class="form-control" hidden readonly />
+    </form>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Holder.ID">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>
+```
+
+Open the ```Details.cshtml.cs``` file.
+
+Import the following reference (at the top of the file):
+
+```
+using Microsoft.AspNetCore.Hosting;
+using PdfSharp.Pdf;
+using PdfSharp.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing;
+using System.IO;
+using System.Text;
+```
+
+
+Add the following instance variables to the class, and modify the ```DetailsModel``` method's arguments:
+
+```
+// Holds the root filepath of the web application; used for saves, etc.
+private readonly IWebHostEnvironment _environment;
+
+public DetailsModel(IDCardDemo.Data.IDCardDemoContext context, IWebHostEnvironment environment)
+{
+    _context = context;
+    _environment = environment;
+}
+```
+
+Add the following methods after ```OnGetAsync```:
+
+```
+public async Task<IActionResult> OnPostPrintCard(int? id) {
+	if (id == null) {
+		return NotFound();
+	}
+
+	Holder = await _context.Holder.FirstOrDefaultAsync(m => m.ID == id);
+	// Load images
+	Bitmap id_front_bitmap = new Bitmap(Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "id_card_front.png"));
+	Bitmap id_back_bitmap = new Bitmap(Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "id_card_back.png"));
+	Graphics id_front_Graphics = Graphics.FromImage(id_front_bitmap);
+	Graphics id_back_Graphics = Graphics.FromImage(id_back_bitmap);
+
+	// Draw front of card, signature first
+	Image holder_signature = Image.FromFile(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath));
+	holder_signature = resizeImage(holder_signature, new Size(240, 90));
+	Bitmap holder_signature_clear = new Bitmap(holder_signature);
+
+	// Make signature background color transparent
+	holder_signature_clear.MakeTransparent(Color.White);
+	id_front_Graphics.DrawImage(holder_signature_clear, 90, 200);
+	Image holder_picture = null;
+	try {
+		holder_picture = Image.FromFile(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath));
+	}
+	catch {
+		holder_picture = Image.FromFile(Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "no_picture.png"));
+	}
+	holder_picture = resizeImage(holder_picture, new Size(160, 160));
+	id_front_Graphics.DrawImage(holder_picture, 305, 72);
+
+	// Create font and brush, then add info
+	Font drawFont = new Font("Arial", 13f, FontStyle.Bold);
+	SolidBrush drawBrush = new SolidBrush(System.Drawing.Color.Black);
+	id_front_Graphics.DrawString(String.Format("{0},\r\n{1} {2}\r\n\r\n1 MAIN ST\r\nANY TOWN, MD 12345\r\n\r\nDOB: {3}\r\nSEX: {4} / HT: {5}\"\r\nEYES: {6}", Holder.LastName, Holder.FirstName, Holder.MI, Holder.DOB.ToShortDateString(), Holder.Gender, Holder.Height, Holder.EyeColor), drawFont, drawBrush, 92, 45);
+
+	// Draw back of card
+	Image holder_barcode = Image.FromFile(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path));
+	id_back_Graphics.DrawImage(holder_barcode, 25, 170);
+
+	// Create a new PDF document
+	PdfDocument document = new PdfDocument();
+	document.Info.Title = String.Format("ID Card for {0}, {1} {2}.", Holder.LastName, Holder.FirstName, Holder.MI);
+
+	// Create empty pages
+	PdfPage page1 = document.AddPage();
+	page1.Height = XUnit.FromInch(3.16);
+	page1.Width = XUnit.FromInch(5);
+	PdfPage page2 = document.AddPage();
+	page2.Height = XUnit.FromInch(3.16);
+	page2.Width = XUnit.FromInch(5);
+
+	// Get XGraphics objects for drawing
+	XGraphics gfx1 = XGraphics.FromPdfPage(page1);
+	XGraphics gfx2 = XGraphics.FromPdfPage(page2);
+	gfx2.SmoothingMode = XSmoothingMode.HighQuality;
+	XImage temp_image = null;
+	temp_image = XImage.FromStream(bitmapToStream(id_front_bitmap, ImageFormat.Png));
+	gfx1.DrawImage(temp_image, 0, 0);
+	id_back_bitmap.RotateFlip(RotateFlipType.Rotate180FlipNone);
+	temp_image = XImage.FromStream(bitmapToStream(id_back_bitmap, ImageFormat.Png));
+	gfx2.DrawImage(temp_image, 0, 0);
+	// Save to PDF
+	string pdf_filename = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", "temp.pdf");
+	Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+	document.Save(pdf_filename);
+
+	id_front_bitmap.Dispose();
+	id_back_bitmap.Dispose();
+	id_front_Graphics.Dispose();
+	id_back_Graphics.Dispose();
+
+	// Special Thanks to CodeCaster at https://stackoverflow.com/questions/40486431/return-pdf-to-the-browser-using-asp-net-core
+	var stream = new FileStream(pdf_filename, FileMode.Open);
+	return new FileStreamResult(stream, "application/pdf");
+}
+// Special thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
+public static string RemoveSpecialCharacters(string str) {
+	StringBuilder sb = new StringBuilder();
+	foreach (char c in str) {
+		if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+			sb.Append(c);
+		}
+	}
+	return sb.ToString();
+}
+public static Image resizeImage(Image imgToResize, Size size) {
+	return (Image)(new Bitmap(imgToResize, size));
+}
+
+public static Stream bitmapToStream(Bitmap bitmap, ImageFormat format) {
+	var stream = new MemoryStream();
+	bitmap.Save(stream, format);
+	stream.Position = 0;
+	return stream;
+}
+```
+
+Start the app using IIS:
+
+```
+dotnet clean
+dotnet build
+dotnet run
+```
+
+Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001):
+
+
+![Print a Card](card_demo_22_print_card.png)
+
+-----
+
+![Card Printed](card_demo_23_card_printed.png)
+
+When finished, close the browser, then press [Ctrl]+[C] to continue.
 
 ----------
 

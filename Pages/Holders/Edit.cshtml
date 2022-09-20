@@ -5,14 +5,21 @@
     ViewData["Title"] = "Edit";
 }
 
+@Html.AntiForgeryToken()
+
+<link rel="stylesheet" href="~/css/photo.css" />
+<link rel="stylesheet" href="~/css/signature.css" />
+
 <h1>Edit</h1>
 
 <h4>Holder</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
+        <h4 class="text-danger font-weight-bold font-weight-italic">@ViewData["Status"]</h4>
+        <h4>Fill out the form:</h4>
         <p>An asterisk (*) indicates a required field.</p>
-        <form method="post">
+        <form id="edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Holder.ID" />
             <div class="form-group">
@@ -54,17 +61,70 @@
                 <select asp-for="Holder.EyeColor" asp-items="Model.EyeColor" class="form-control"></select>
                 <span asp-validation-for="Holder.EyeColor" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+            <input asp-for="Holder.PhotoPath" class="form-control" hidden readonly />
+            <input asp-for="Holder.SignaturePath" class="form-control" hidden readonly />
+            <input asp-for="Holder.PDF417Path" class="form-control" hidden readonly />
         </form>
+        <hr />
+        <h4>Current Photo:</h4>
+        <br />
+        <img src="../photos/@Html.DisplayFor(model => model.Holder.PhotoPath)" alt=@Html.DisplayFor(model =>
+                    model.Holder.PhotoPath) />
+        <br />
+        <br />
+        <h4>Update photo:</h4>
+        <ol type="a">
+            <li><button onclick="cameraOn()">Turn on the camera</button></li>
+            <li>
+                <p>Center your face in the screen below:</p>
+                <div id="videoContainer">
+                    <div id="box"></div>
+                    <video id="webcamVideo" width="300" height="300" autoplay></video>
+                </div>
+            </li>
+            <li><button onclick="takePhoto()">Take a photo</button></li>
+            <li>
+                <p>Review your photo:</p>
+                <canvas id="photoCanvas" width="300" height="300">
+                    Your browser does not support the HTML5 canvas tag.
+                </canvas>
+            </li>
+            <li><button onclick="updatePhoto()">Update the photo</button></li>
+        </ol>
+        <hr />
+        <h4>Current Signature:</h4>
+        <br />
+        <img src="../photos/@Html.DisplayFor(model => model.Holder.SignaturePath)" alt=@Html.DisplayFor(model =>
+                    model.Holder.SignaturePath) />
+        <br />
+        <br />
+        <h4>Update signature:</h4>
+        <button onclick="clearPad()">Clear the box</button>
+        <br />
+        <canvas class="my-2" id="signatureCanvas" width="320" height="120">
+            Your browser does not support the HTML5 canvas tag.
+        </canvas>
+        <br />
+        <button onclick="updateSignature()">Update the signature</button>
+        <hr />
+        <h4>Add Holder:</h4>
+        <p class="p-2 bg-warning text-dark rounded">
+            Before pressing <b>Update Holder</b>, ensure you have filled in all the required fields,
+            and, if applicable, you have accepted any changed photo or signature.
+            Otherwise, the page will reload, and you will have to submit another photo and signature.
+        </p>
+        <input type="submit" value="Update Holder" form="edit" />
+        <hr />
     </div>
 </div>
 
 <div>
-    <a asp-page="./Index">Back to List</a>
+    <a asp-page="Index">Back to List</a>
 </div>
 
+<script type="text/javascript" src="~/js/photo.js" asp-append-version="true"></script>
+<script type="text/javascript" src="~/js/signature_pad.min.js" asp-append-version="true"></script>
+<script type="text/javascript" src="~/js/signature.js" asp-append-version="true"></script>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

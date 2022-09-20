@@ -66,6 +66,7 @@ namespace IDCardDemo.Pages.Holders {
         // Method to save temp photo using Ajax
         // Remember to prepend OnPost to method name
         public JsonResult OnPostSavePhoto([FromBody] string imageData) {
+            if (String.IsNullOrWhiteSpace(imageData)) return null;
             byte[] data = Convert.FromBase64String(imageData);
             string filepath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
             System.IO.File.WriteAllBytes(filepath, data);
@@ -73,15 +74,17 @@ namespace IDCardDemo.Pages.Holders {
             photoUploaded = true;
             return new JsonResult(filepath);
         }
+
         // Method to save temp signature using Ajax
         // Remember to prepend OnPost to method name
-        public void OnPostSaveSignature([FromBody] string imageData) {
-            if (String.IsNullOrWhiteSpace(imageData)) return;
+        public JsonResult OnPostSaveSignature([FromBody] string imageData) {
+            if (String.IsNullOrWhiteSpace(imageData)) return null;
             byte[] data = Convert.FromBase64String(imageData);
             string filepath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
             System.IO.File.WriteAllBytes(filepath, data);
             Holder.SignaturePath = filepath;
             signatureUploaded = true;
+            return new JsonResult(filepath);
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
@@ -108,7 +111,7 @@ namespace IDCardDemo.Pages.Holders {
                 string timeStamp = DateTime.Now.ToString("yyyMMddHHmmss");
                 string userFileName = String.Format("{0}_{1}_{2}", fixedLastName.ToLower(), fixedFirstName.ToLower(), timeStamp);
 
-                // Copy the temp images to photo folder and rename them using the member data
+                // Copy the temp images to photo folder and rename them using the holder data
                 string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
                 Holder.PhotoPath = String.Format("{0}_photo.png", userFileName);
                 System.IO.File.Copy(photoImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath), true);
@@ -118,7 +121,7 @@ namespace IDCardDemo.Pages.Holders {
                 System.IO.File.Copy(signatureImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath), true);
 
                 // Prepare barcode info
-                string memberInfo = String.Format("{0},{1},{2},{3},{4},{5},{6},{7}",
+                string holderInfo = String.Format("{0},{1},{2},{3},{4},{5},{6},{7}",
                  Holder.LastName.ToUpper(),
                  Holder.FirstName.ToUpper(),
                  String.IsNullOrEmpty(Holder.MI) ? "" : Holder.MI.ToUpper(),
@@ -135,7 +138,7 @@ namespace IDCardDemo.Pages.Holders {
                 };
                 Bitmap barcodeBitmap;
                 writer.Options.Margin = 0;
-                barcodeBitmap = writer.Write(memberInfo);
+                barcodeBitmap = writer.Write(holderInfo);
                 Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
                 barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
                 barcodeBitmap.Dispose();

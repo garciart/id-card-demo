@@ -7,6 +7,9 @@
 
 @Html.AntiForgeryToken()
 
+<link rel="stylesheet" href="~/css/photo.css" />
+<link rel="stylesheet" href="~/css/signature.css" />
+
 <h1>Create</h1>
 
 <h4>Holder</h4>
@@ -66,13 +69,13 @@
                 <p>Center your face in the screen below:</p>
                 <div id="videoContainer">
                     <div id="box"></div>
-                    <video id="webcamVideo" width="300" height="300" autoplay style="border:1px solid black;"></video>
+                    <video id="webcamVideo" width="300" height="300" autoplay></video>
                 </div>
             </li>
             <li><button onclick="takePhoto()">Take a photo</button></li>
             <li>
                 <p>Review your photo:</p>
-                <canvas id="photoCanvas" width="300" height="300" style="border:1px solid black;">
+                <canvas id="photoCanvas" width="300" height="300">
                     Your browser does not support the HTML5 canvas
                     tag.
                 </canvas>
@@ -83,7 +86,7 @@
         <h4>Add a signature:</h4>
         <button onclick="clearPad()">Clear the box</button>
         <br />
-        <canvas class="my-2" id="signatureCanvas" width="320" height="120" style="border:1px solid black;">
+        <canvas class="my-2" id="signatureCanvas" width="320" height="120">
             Your browser does not support the HTML5 canvas
             tag.
         </canvas>
