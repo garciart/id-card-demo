@@ -39,8 +39,8 @@ Enter the following commands to create a Razor web application that uses .NET Co
 
 ```
 cd C:\Users\Rob\source\repos
-dotnet new webapp --output IDCardDemo --framework netcoreapp3.1 --auth Individual
-cd IDCardDemo
+dotnet new webapp --output id-card-demo --framework netcoreapp3.1 --auth Individual
+cd id-card-demo
 dotnet new sln
 dotnet sln add IDCardDemo.csproj
 ```
@@ -78,6 +78,9 @@ dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design --version 3.
 dotnet add package Microsoft.EntityFrameworkCore.Design --version=3.*
 dotnet add package Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore --version=3.1.*
 dotnet add package Microsoft.Extensions.Logging.Debug --framework netcoreapp3.1
+dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore --version=3.1.*
+dotnet add package Microsoft.AspNetCore.Identity.UI --version=3.1.*
+dotnet add package Microsoft.EntityFrameworkCore.Tools --version=3.1.*
 ```
 
 Add packages to support image manipulation and PDF creation:
@@ -107,10 +110,10 @@ Select-String -Path "IDCardDemo.csproj" -Pattern "TargetFramework"
 Next, ensure you are in the application's home directory:
 
 ```
-cd C:\Users\Rob\source\repos\IDCardDemo
+cd C:\Users\Rob\source\repos\id-card-demo
 ```
 
-This web application uses several databases. The default database file, ```app.db```, holds information about who can log into the site, such as administrators and site managers. However, in order to update the database, these users must have permission to read and write to the database file and its parent directory. Since the root directory does not allow this, and the EntityFramework cannot create directories using the SQLite provider, create a sub-directory named ```App_Data``` in the ```IDCardDemo``` root directory to hold the database file:
+This web application uses several databases. The default database file, ```app.db```, holds information about who can log into the site, such as administrators and site managers. However, in order to update the database, these users must have permission to read and write to the database file and its parent directory. Since the root directory does not allow this, and the EntityFramework cannot create directories using the SQLite provider, create a sub-directory named ```App_Data``` in the ```id-card-demo``` root directory to hold the database file:
 
 ```
 mkdir App_Data
@@ -178,7 +181,7 @@ When finished, close the browser, then press [Ctrl]+[C] to continue.
 Return to the application's home directory:
 
 ```
-cd C:\Users\Rob\source\repos\IDCardDemo
+cd C:\Users\Rob\source\repos\id-card-demo
 ```
 
 Create a directory named ```Models``` and navigate to it:
@@ -993,7 +996,7 @@ services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
 
 Navigate to ```Pages/Holders``` and open the ```Create.cshtml.cs``` file.
 
-Import the following reference (at the top of the file):
+Add the following references (at the top of the file):
 
 ```
 using Microsoft.AspNetCore.Hosting;
@@ -1166,7 +1169,7 @@ Near the bottom, replace everything after the last ```<div class="form-group">``
         </form>
         <hr />
         <h4>Take a photo:</h4>
-        <ol type="a">
+        <ol type="1">
             <li><button onclick="cameraOn()">Turn on the camera</button></li>
             <li>
                 <p>Center your face in the screen below:</p>
@@ -1221,7 +1224,7 @@ Near the bottom, replace everything after the last ```<div class="form-group">``
 
 Open the ```Edit.cshtml.cs``` file.
 
-Import the following reference (at the top of the file):
+Add the following references (at the top of the file):
 
 ```
 using Microsoft.AspNetCore.Hosting;
@@ -1436,7 +1439,7 @@ Near the bottom, replace everything after the last ```<div class="form-group">``
         <br />
         <br />
         <h4>Update photo:</h4>
-        <ol type="a">
+        <ol type="1">
             <li><button onclick="cameraOn()">Turn on the camera</button></li>
             <li>
                 <p>Center your face in the screen below:</p>
@@ -1528,7 +1531,7 @@ Right after the last description item (should be ```EyeColor```, add the followi
 
 Open the ```Delete.cshtml.cs``` file.
 
-Import the following reference (at the top of the file):
+Add the following references (at the top of the file):
 
 ```
 using Microsoft.AspNetCore.Hosting;
@@ -1661,7 +1664,7 @@ Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, ope
 
 Open the ```Details.cshtml.cs``` file.
 
-Import the following reference (at the top of the file):
+Add the following references (at the top of the file):
 
 ```
 using Microsoft.AspNetCore.Hosting;
@@ -1806,6 +1809,388 @@ Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001
 
 When finished, close the browser, then press [Ctrl]+[C] to continue.
 
+-----
+
+## Add Authentication and Authorization
+
+**NOTE** - Here comes a lot of code again! Save often!
+
+In order to use this application, and to prevent attackers from creating multiple ID cards, the user must log in. However, each card holder will not have an account. This application will only have three accounts: Sponsor, Manager, and Administrator:
+
+- Sponsor - Can access the Login, Main Page, Index, Create, Details, and Edit pages
+- Manager - Can access the Login, Main Page, Index, Create, Details, Edit, Print, and Delete pages
+- Administrator - Can access all pages and account administration
+
+Scaffold the **Register** and **Login** pages:
+
+```
+dotnet aspnet-codegenerator identity --files "Account.Register;Account.Login"
+```
+
+This will allow you to edit the code in the **Register** and **Login** pages. However, scaffolding will also add code to override the configuration in ```Startup.cs```. To fix this problem, go the root directory, and, using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open the ```appsettings.json``` and remove the following line and its preceding comma:
+
+**NOTE** - https://stackoverflow.com/questions/51161729/addidentity-fails-invalidoperationexception-scheme-already-exists-identity
+
+```
+"ConnectionStrings": {
+"IDCardDemoIdentityDbContextConnection": "Data Source=IDCardDemo.db"
+}
+```
+
+Go to the ```Areas\Identity``` directory. Open the ```IdentityHostingStartup.cs``` file, and comment out the code in the ```Configure``` method:
+
+```
+public void Configure(IWebHostBuilder builder)
+{
+    /*
+	builder.ConfigureServices((context, services) => {
+		services.AddDbContext<IDCardDemoIdentityDbContext>(options =>
+			options.UseSqlite(
+				context.Configuration.GetConnectionString("IDCardDemoIdentityDbContextConnection")));
+
+		services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+			.AddEntityFrameworkStores<IDCardDemoIdentityDbContext>();
+	});
+	*/
+}
+```
+
+Replace email with username in the **Register** and **Login** pages.
+
+**NOTE** - https://stackoverflow.com/questions/55772252/asp-net-core-how-to-login-with-username-instead-of-email
+
+Go to the ```Areas\Identity\Pages\Account``` directory. Open the ```Register.cshtml.cs``` file, and replace...
+
+```
+[Required]
+[EmailAddress]
+[Display(Name = "Email")]
+public string Email { get; set; }
+```
+
+with...
+
+```
+/// <summary>
+/// <value>Property <c>UserName</c> is required; can contain numbers, dashes, periods, and underscores only; cannot start with a dash; and must be less than 32 characters in length.</value>
+/// </summary>
+private string _userName;
+[Required]
+[StringLength(32, MinimumLength = 1, ErrorMessage = "{0} must be between {2} and {1} characters long.")]
+[DataType(DataType.Text)]
+[Display(Name = "User Name")]
+[RegularExpression(@"^([\.\dA-Za-z_])([\-\.\dA-Za-z_]*)$", ErrorMessage = "Letters, numbers, dashes, periods, and underscores only. Cannot start with a dash")]
+public string UserName {
+	get => _userName;
+	// Convert to uppercase before storing
+	set => _userName = !String.IsNullOrEmpty(value) ? value.ToUpper() : value;
+}
+```
+
+Next, replace...
+
+```
+var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
+```
+
+with...
+
+```
+var user = new IdentityUser { UserName = Input.UserName };
+```
+
+Finally, replace...
+
+```
+var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+var callbackUrl = Url.Page(
+	"/Account/ConfirmEmail",
+	pageHandler: null,
+	values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
+	protocol: Request.Scheme);
+
+await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+	$"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+if (_userManager.Options.SignIn.RequireConfirmedAccount)
+{
+	return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+}
+else
+{
+	await _signInManager.SignInAsync(user, isPersistent: false);
+	return LocalRedirect(returnUrl);
+}
+```
+
+with...
+
+```
+await _signInManager.SignInAsync(user, isPersistent: false);
+return LocalRedirect(returnUrl);
+```
+
+Open the ```Register.cshtml``` file, and replace...
+
+```
+<label asp-for="Input.Email"></label>
+<input asp-for="Input.Email" class="form-control" />
+<span asp-validation-for="Input.Email" class="text-danger"></span>
+```
+
+with...
+
+```
+<label asp-for="Input.UserName"></label>
+<input asp-for="Input.UserName" class="form-control"/>
+<span asp-validation-for="Input.UserName" class="text-danger"></span>
+```
+
+Open the ```Login.cshtml.cs``` file, and replace...
+
+```
+[Required]
+[EmailAddress]
+public string Email { get; set; }
+```
+
+with...
+
+```
+[Required]
+[DataType(DataType.Text)]
+[Display(Name = "User Name")]
+public string UserName { get; set; }
+```
+
+Next, replace...
+
+```
+var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+```
+
+with...
+
+```
+var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+```
+
+Open the ```Login.cshtml``` file, and replace...
+
+```
+<label asp-for="Input.Email"></label>
+<input asp-for="Input.Email" class="form-control" />
+<span asp-validation-for="Input.Email" class="text-danger"></span>
+```
+
+with...
+
+```
+<label asp-for="Input.UserName"></label>
+<input asp-for="Input.UserName" class="form-control" />
+<span asp-validation-for="Input.UserName" class="text-danger"></span>
+```
+
+Open the ```Startup.cs``` file.
+
+In the ```ConfigureServices()``` method, replace...
+
+```
+services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+```
+
+with...
+
+```
+services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+```
+
+ At the end of the ```ConfigureServices()``` method (after ```services.AddAntiforgery```), add:
+
+```
+services.Configure<IdentityOptions>(options =>
+{
+	// Password settings.
+	options.Password.RequireDigit = true;
+	options.Password.RequireLowercase = true;
+	options.Password.RequireNonAlphanumeric = true;
+	options.Password.RequireUppercase = true;
+	options.Password.RequiredLength = 6;
+	options.Password.RequiredUniqueChars = 1;
+
+	// Lockout settings.
+	options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+	options.Lockout.MaxFailedAccessAttempts = 5;
+	options.Lockout.AllowedForNewUsers = true;
+
+	// User settings.
+	options.User.AllowedUserNameCharacters =
+	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
+});
+
+services.ConfigureApplicationCookie(options =>
+{
+	// Cookie settings
+	options.Cookie.HttpOnly = true;
+	options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+	options.LoginPath = "/Identity/Account/Login";
+	options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+	options.SlidingExpiration = true;
+});
+```
+
+Start the app using IIS:
+
+```
+dotnet clean
+dotnet build
+dotnet run
+```
+
+Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001).
+
+Register the Administrator, using a user name of "admin" and a password of your choice (do not forget it!):
+
+![Register User](card_demo_24_register.png)
+
+You will return to the main page, and you will see a greeting, instead of **Register**, and **Logout** instead of **Login**:
+
+![Logged In](card_demo_25_logged_in.png)
+
+Go ahead and log out:
+
+![Log Out](card_demo_26_logout.png)
+
+Verify you were registered by logging back in:
+
+![Log In](card_demo_27_login.png)
+
+Log out and repeat this process for the Manager and Sponsor accounts.
+
+When finished, close the browser, then press [Ctrl]+[C] to continue.
+
+Lock down the application by requiring an authorized user to access the main page and the pages in the Holders directory. There are two ways of doing this.
+
+**First Way:** In ```Pages/Index.cshtml.cs``` (not ```Pages/Holders/Index.cshtml.cs```), add the following reference (at the top of the file):
+
+```
+using Microsoft.AspNetCore.Authorization;
+```
+
+Add the attribute, ```[Authorize]```, to the class:
+
+```
+[Authorize]
+public class IndexModel : PageModel
+```
+
+**Second Way:** In ```Startup.cs```, replace ```services.AddRazorPages()``` with:
+
+```
+services.AddRazorPages(options => {
+	options.Conventions.AuthorizeFolder("/Holders");
+});
+```
+
+Start the app using IIS:
+
+```
+dotnet clean
+dotnet build
+dotnet run
+```
+
+Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001). The Login page will appear.
+
+Attempt to access either the list of card holders or the create page, using the following URLs:
+
+https://localhost:44349/Holders
+https://localhost:44349/Holders/Create
+
+You are redirected to the Login page.
+
+![Blocked](card_demo_29_blocked.png)
+
+However, since you did not lock down the Privacy page, you can still access it:
+
+![Not Blocked](card_demo_30_not_blocked.png)
+
+**NOTE** - Leave the Privacy page accessible for now.
+
+Try accessing a file in the ```wwwroot``` directory:
+
+https://localhost:44349/images/id_card_front.png
+
+![Unprotected](card_demo_31_wwwroot_unprotected.png)
+
+Dang! Attackers may be able to access photos, signatures, etc.
+
+Close the browser, then press [Ctrl]+[C] to continue.
+
+Open ```Startup.cs``` and move ```app.UseStaticFiles();``` after ```app.UseAuthorization();```.
+
+Replace ```app.UseStaticFiles();``` with:
+
+```
+app.UseStaticFiles(new StaticFileOptions() {
+	OnPrepareResponse = s => {
+		if ((
+		s.Context.Request.Path.StartsWithSegments(new PathString("/images")) ||
+		s.Context.Request.Path.StartsWithSegments(new PathString("/photos")) ||
+		s.Context.Request.Path.StartsWithSegments(new PathString("/temp"))) &&
+		   !s.Context.User.Identity.IsAuthenticated) {
+			s.Context.Response.StatusCode = 401;
+			s.Context.Response.Body = Stream.Null;
+			s.Context.Response.ContentLength = 0;
+		}
+	}
+});
+```
+
+Start the app using IIS:
+
+```
+dotnet clean
+dotnet build
+dotnet run
+```
+
+Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001). The Login page will appear.
+
+Try accessing a file in the ```wwwroot``` directory:
+
+https://localhost:44349/images/id_card_front.png
+
+![Protected](card_demo_32_wwwroot_protected.png)
+
+Only authenticated users can access the files in those folders.
+
+Open ** Startup.cs** and disable the **Register** link by replacing ```app.UseEndpoints``` with:
+
+```
+app.UseEndpoints(endpoints => {
+	endpoints.MapRazorPages();
+	endpoints.MapGet("/Identity/Account/Register", context => Task.Factory.StartNew(() => context.Response.Redirect("/Identity/Account/Login", true, true)));
+	endpoints.MapPost("/Identity/Account/Register", context => Task.Factory.StartNew(() => context.Response.Redirect("/Identity/Account/Login", true, true)));
+});
+```
+
+Open ```Pages/Shared/_LoginPartial.cshtml``` and delete or comment out:
+
+```
+<li class="nav-item">
+	<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+</li>
+```
+
+If you attempt to access https://localhost:44349/Identity/Account/Register, you will be redirected to the Login page.
+
+
+
 ----------
 
 Create a ```web.config``` file and add the following lines:
@@ -1835,28 +2220,12 @@ Create a ```web.config``` file and add the following lines:
 
 Otherwise, you may encounter a ```SqliteException: SQLite Error 14: 'unable to open database file'.``` error.
 
+-----
 
+Had to reset repo:
+git reset --hard <commit>
+git push --force
 
-
-Applicant/Member - Create, Read, and Update (own info)
-Login
-Create
-Details
-Edit
-
-Officer (SFD only) - Own info, and Read and Print All
-Login
-Index
-Read
-Print
-
-Manager - Own info, and Create, Read, Update, Delete, and Print All
-Login
-Index
-Create
-Details
-Edit
-Delete
-Print
-
-Administrator - Own info, CRUD-P, and, and Role administration
+And discard local changes:
+git restore .
+git clean -f
