@@ -371,6 +371,7 @@ C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\runtimes\win-x64\
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\e_sqlite3.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp3.1\System.Drawing.Common.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.1\System.Drawing.Common.dll
+C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.csproj.AssemblyReference.cache
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.AssemblyInfoInputs.cache
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.AssemblyInfo.cs
@@ -385,6 +386,11 @@ C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\scopedcss\bundle\
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.TagHelpers.input.cache
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.TagHelpers.output.cache
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.RazorCoreGenerate.cache
+C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\Account\Login.cshtml.g.cs
+C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\Account\Register.cshtml.g.cs
+C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\Account\_ViewImports.cshtml.g.cs
+C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\_ValidationScriptsPartial.cshtml.g.cs
+C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\_ViewImports.cshtml.g.cs
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\_ViewStart.cshtml.g.cs
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Pages\Error.cshtml.g.cs
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Pages\Holders\Create.cshtml.g.cs
@@ -406,8 +412,3 @@ C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.csproj
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.dll
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.pdb
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.genruntimeconfig.cache
-C:\Users\Rob\Source\Repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\Account\Login.cshtml.g.cs
-C:\Users\Rob\Source\Repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\Account\Register.cshtml.g.cs
-C:\Users\Rob\Source\Repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\Account\_ViewImports.cshtml.g.cs
-C:\Users\Rob\Source\Repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\_ValidationScriptsPartial.cshtml.g.cs
-C:\Users\Rob\Source\Repos\id-card-demo\obj\Debug\netcoreapp3.1\Razor\Areas\Identity\Pages\_ViewImports.cshtml.g.cs

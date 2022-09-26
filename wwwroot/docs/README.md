@@ -1813,6 +1813,8 @@ When finished, close the browser, then press [Ctrl]+[C] to continue.
 
 ## Add Authentication and Authorization
 
+### Part I
+
 **NOTE** - Here comes a lot of code again! Save often!
 
 In order to use this application, and to prevent attackers from creating multiple ID cards, the user must log in. However, each card holder will not have an account. This application will only have three accounts: Sponsor, Manager, and Administrator:
@@ -2065,13 +2067,15 @@ Go ahead and log out:
 
 ![Log Out](card_demo_26_logout.png)
 
-Verify you were registered by logging back in:
+Make sure you can log back in:
 
 ![Log In](card_demo_27_login.png)
 
 Log out and repeat this process for the Manager and Sponsor accounts.
 
 When finished, close the browser, then press [Ctrl]+[C] to continue.
+
+### Part II
 
 Lock down the application by requiring an authorized user to access the main page and the pages in the Holders directory. There are two ways of doing this.
 
@@ -2088,7 +2092,7 @@ Add the attribute, ```[Authorize]```, to the class:
 public class IndexModel : PageModel
 ```
 
-**Second Way:** In ```Startup.cs```, replace ```services.AddRazorPages()``` with:
+**Second Way:** In ```Startup.cs```, in the ```ConfigureServices``` method, replace ```services.AddRazorPages()``` with:
 
 ```
 services.AddRazorPages(options => {
@@ -2113,11 +2117,11 @@ https://localhost:44349/Holders/Create
 
 You are redirected to the Login page.
 
-![Blocked](card_demo_29_blocked.png)
+![Blocked](card_demo_28_blocked.png)
 
 However, since you did not lock down the Privacy page, you can still access it:
 
-![Not Blocked](card_demo_30_not_blocked.png)
+![Not Blocked](card_demo_29_not_blocked.png)
 
 **NOTE** - Leave the Privacy page accessible for now.
 
@@ -2125,13 +2129,22 @@ Try accessing a file in the ```wwwroot``` directory:
 
 https://localhost:44349/images/id_card_front.png
 
-![Unprotected](card_demo_31_wwwroot_unprotected.png)
+![Unprotected](card_demo_30_wwwroot_unprotected.png)
 
 Dang! Attackers may be able to access photos, signatures, etc.
 
 Close the browser, then press [Ctrl]+[C] to continue.
 
-Open ```Startup.cs``` and move ```app.UseStaticFiles();``` after ```app.UseAuthorization();```.
+Open ```Startup.cs```.
+
+Add the following references (at the top of the file):
+
+```
+using Microsoft.AspNetCore.Http;
+using System.IO;
+```
+
+Move ```app.UseStaticFiles();``` after ```app.UseAuthorization();```.
 
 Replace ```app.UseStaticFiles();``` with:
 
@@ -2140,6 +2153,7 @@ app.UseStaticFiles(new StaticFileOptions() {
 	OnPrepareResponse = s => {
 		if ((
 		s.Context.Request.Path.StartsWithSegments(new PathString("/images")) ||
+		s.Context.Request.Path.StartsWithSegments(new PathString("/js")) ||
 		s.Context.Request.Path.StartsWithSegments(new PathString("/photos")) ||
 		s.Context.Request.Path.StartsWithSegments(new PathString("/temp"))) &&
 		   !s.Context.User.Identity.IsAuthenticated) {
@@ -2165,7 +2179,7 @@ Try accessing a file in the ```wwwroot``` directory:
 
 https://localhost:44349/images/id_card_front.png
 
-![Protected](card_demo_32_wwwroot_protected.png)
+![Protected](card_demo_31_wwwroot_protected.png)
 
 Only authenticated users can access the files in those folders.
 
@@ -2189,7 +2203,11 @@ Open ```Pages/Shared/_LoginPartial.cshtml``` and delete or comment out:
 
 If you attempt to access https://localhost:44349/Identity/Account/Register, you will be redirected to the Login page.
 
+![Protected](card_demo_31_wwwroot_protected.png)
 
+## Adding Role-based authorization
+
+https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-3.1
 
 ----------
 

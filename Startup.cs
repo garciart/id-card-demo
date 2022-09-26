@@ -12,6 +12,8 @@ using IDCardDemo.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace IDCardDemo
 {
@@ -35,7 +37,9 @@ namespace IDCardDemo
                 options.UseSqlite(string.Format("DataSource={0}", holdersDBSource)));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddRazorPages();
+            services.AddRazorPages(options => {
+                options.Conventions.AuthorizeFolder("/Holders");
+            });
             // Needed to allow the app to save files to the wwwroot
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
 
@@ -87,16 +91,29 @@ namespace IDCardDemo
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseStaticFiles(new StaticFileOptions() {
+                OnPrepareResponse = s => {
+                    if ((
+                    s.Context.Request.Path.StartsWithSegments(new PathString("/images")) ||
+                    s.Context.Request.Path.StartsWithSegments(new PathString("/photos")) ||
+                    s.Context.Request.Path.StartsWithSegments(new PathString("/temp"))) &&
+                       !s.Context.User.Identity.IsAuthenticated) {
+                        s.Context.Response.StatusCode = 401;
+                        s.Context.Response.Body = Stream.Null;
+                        s.Context.Response.ContentLength = 0;
+                    }
+                }
+            });
 
-            app.UseEndpoints(endpoints =>
-            {
+            app.UseEndpoints(endpoints => {
                 endpoints.MapRazorPages();
+                endpoints.MapGet("/Identity/Account/Register", context => Task.Factory.StartNew(() => context.Response.Redirect("/Identity/Account/Login", true, true)));
+                endpoints.MapPost("/Identity/Account/Register", context => Task.Factory.StartNew(() => context.Response.Redirect("/Identity/Account/Login", true, true)));
             });
         }
     }
