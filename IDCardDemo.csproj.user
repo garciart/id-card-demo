@@ -4,5 +4,7 @@
     <ShowAllFiles>true</ShowAllFiles>
     <_SelectedScaffolderID>IdentityScaffolder</_SelectedScaffolderID>
     <_SelectedScaffolderCategoryPath>root/Identity</_SelectedScaffolderCategoryPath>
+    <WebStackScaffolding_ViewDialogWidth>800</WebStackScaffolding_ViewDialogWidth>
+    <NameOfLastUsedPublishProfile>C:\Users\Rob\Source\Repos\id-card-demo\Properties\PublishProfiles\FTPProfile.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

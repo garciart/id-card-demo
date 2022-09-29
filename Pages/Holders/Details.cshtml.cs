@@ -14,6 +14,7 @@ using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IDCardDemo.Pages.Holders
 {

@@ -30,18 +30,33 @@ namespace IDCardDemo
         public void ConfigureServices(IServiceCollection services)
         {
             string appDBSource = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"App_Data\app.db");
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(string.Format("DataSource={0}", appDBSource)));
+
             string holdersDBSource = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"App_Data\Holders.db");
+
             services.AddDbContext<IDCardDemoContext>(options =>
                 options.UseSqlite(string.Format("DataSource={0}", holdersDBSource)));
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            // Create authorization policies
+            services.AddAuthorization(options => {
+                options.AddPolicy("MustBeManager", policy =>
+                    policy.RequireRole("Manager"));
+            });
+            // Restrict access to pages
             services.AddRazorPages(options => {
                 options.Conventions.AuthorizeFolder("/Holders");
+                options.Conventions.AuthorizePage("/Holders/Details", "MustBeManager");
             });
             // Needed to allow the app to save files to the wwwroot
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
+
+
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -100,6 +115,7 @@ namespace IDCardDemo
                 OnPrepareResponse = s => {
                     if ((
                     s.Context.Request.Path.StartsWithSegments(new PathString("/images")) ||
+                    s.Context.Request.Path.StartsWithSegments(new PathString("/js")) ||
                     s.Context.Request.Path.StartsWithSegments(new PathString("/photos")) ||
                     s.Context.Request.Path.StartsWithSegments(new PathString("/temp"))) &&
                        !s.Context.User.Identity.IsAuthenticated) {

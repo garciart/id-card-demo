@@ -3,7 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-IDCardDemo-08AEAF7A-3206-460E-AAFE-906C1AFB9CCF</UserSecretsId>
+	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+	<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SetupAAA.bak" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="SetupAAA.bak" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
@@ -24,7 +34,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.*" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="PdfSharp" Version="1.50.5147" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="2.1.0" />

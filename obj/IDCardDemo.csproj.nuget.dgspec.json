@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Rob\\Source\\Repos\\id-card-demo\\IDCardDemo.csproj": {}
+    "C:\\Users\\Rob\\source\\repos\\id-card-demo\\IDCardDemo.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Rob\\Source\\Repos\\id-card-demo\\IDCardDemo.csproj": {
+    "C:\\Users\\Rob\\source\\repos\\id-card-demo\\IDCardDemo.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rob\\Source\\Repos\\id-card-demo\\IDCardDemo.csproj",
+        "projectUniqueName": "C:\\Users\\Rob\\source\\repos\\id-card-demo\\IDCardDemo.csproj",
         "projectName": "IDCardDemo",
-        "projectPath": "C:\\Users\\Rob\\Source\\Repos\\id-card-demo\\IDCardDemo.csproj",
+        "projectPath": "C:\\Users\\Rob\\source\\repos\\id-card-demo\\IDCardDemo.csproj",
         "packagesPath": "C:\\Users\\Rob\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rob\\Source\\Repos\\id-card-demo\\obj\\",
+        "outputPath": "C:\\Users\\Rob\\source\\repos\\id-card-demo\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -84,7 +84,7 @@
             },
             "Microsoft.Extensions.Logging.Debug": {
               "target": "Package",
-              "version": "[6.0.0, )"
+              "version": "[3.1.*, )"
             },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",

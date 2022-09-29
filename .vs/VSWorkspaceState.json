@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\wwwroot"
   ],
-  "SelectedNode": "\\IDCardDemo.sln",
+  "SelectedNode": "\\wwwroot\\lib",
   "PreviewInSolutionExplorer": false
 }

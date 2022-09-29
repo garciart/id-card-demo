@@ -206,6 +206,7 @@ C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\appsettings.Devel
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\appsettings.json
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\IDCardDemo.StaticWebAssets.xml
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\IDCardDemo.exe
+C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\IDCardDemo.dll.config
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\IDCardDemo.deps.json
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\IDCardDemo.runtimeconfig.json
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\IDCardDemo.runtimeconfig.dev.json
@@ -237,6 +238,9 @@ C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\Microsoft.EntityF
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Sqlite.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Abstractions.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.dll
+C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyModel.dll
@@ -274,7 +278,6 @@ C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\System.Compositio
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\System.Composition.TypedParts.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\System.Drawing.Common.dll
-C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\System.Runtime.CompilerServices.Unsafe.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\System.Text.Encodings.Web.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\System.Text.Json.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\zxing.dll
@@ -371,7 +374,7 @@ C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\runtimes\win-x64\
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\e_sqlite3.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp3.1\System.Drawing.Common.dll
 C:\Users\Rob\source\repos\id-card-demo\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.1\System.Drawing.Common.dll
-C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.csproj.AssemblyReference.cache
+C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.dll.config
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.AssemblyInfoInputs.cache
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.AssemblyInfo.cs
@@ -412,3 +415,4 @@ C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.csproj
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.dll
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.pdb
 C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.genruntimeconfig.cache
+C:\Users\Rob\source\repos\id-card-demo\obj\Debug\netcoreapp3.1\IDCardDemo.csproj.AssemblyReference.cache
