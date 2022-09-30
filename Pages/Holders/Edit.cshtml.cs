@@ -6,15 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using IDCardDemo.Data;
 using IDCardDemo.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.Drawing;
 using System.IO;
 using System.Text;
 using ZXing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IDCardDemo.Pages.Holders {
+    [Authorize(Policy = "ManagerOrAdminOnly")]
     public class EditModel : PageModel {
         private readonly IDCardDemo.Data.IDCardDemoContext _context;
 

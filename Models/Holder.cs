@@ -1,11 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 
-namespace IDCardDemo.Models
-{
-    public class Holder
-    {
+namespace IDCardDemo.Models {
+    public class Holder {
         /// <summary>
         /// <value>Property <c>ID</c> is the card holder's unique identifier.</value>
         /// </summary>
@@ -46,13 +43,13 @@ namespace IDCardDemo.Models
         [Display(Name = "MI")]
         [RegularExpression(@"^[A-Z]?$", ErrorMessage = "Middle Initial must be a capital letter.")]
         [StringLength(1, MinimumLength = 0, ErrorMessage = "Middle Initial must be between {2} and {1} characters long.")]
-        #nullable enable
+#nullable enable
         public string? MI {
             get => _mi;
             // Convert to uppercase before storing
             set => _mi = !String.IsNullOrEmpty(value) ? value.ToUpper() : value;
         }
-        #nullable disable
+#nullable disable
 
         /// <summary>
         /// <value>Property <c>DOB</c> is required, and must be in yyyy-MM-dd format (e.g., 2001-06-12).</value>
@@ -61,7 +58,7 @@ namespace IDCardDemo.Models
         [Display(Name = "DOB")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "Date of Birth required.")]
-        [NoFutureDOB(ErrorMessage="Date of Birth cannot be in the future.")]
+        [NoFutureDOB(ErrorMessage = "Date of Birth cannot be in the future.")]
         public DateTime DOB { get; set; }
 
         /// <summary>
@@ -107,13 +104,10 @@ namespace IDCardDemo.Models
         public string PDF417Path { get; set; }
     }
 
-    public class NoFutureDOB : ValidationAttribute
-    {
-        public override bool IsValid(object value)
-        {
+    public class NoFutureDOB : ValidationAttribute {
+        public override bool IsValid(object value) {
             var dateValue = value as DateTime? ?? new DateTime();
-            if (dateValue.Date > DateTime.Now.Date)
-            {
+            if (dateValue.Date > DateTime.Now.Date) {
                 return false;
             }
             return true;

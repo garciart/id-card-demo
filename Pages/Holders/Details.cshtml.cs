@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using IDCardDemo.Data;
 using IDCardDemo.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.Drawing;
@@ -14,12 +11,9 @@ using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
 
-namespace IDCardDemo.Pages.Holders
-{
-    public class DetailsModel : PageModel
-    {
+namespace IDCardDemo.Pages.Holders {
+    public class DetailsModel : PageModel {
         private readonly IDCardDemo.Data.IDCardDemoContext _context;
 
         // Holds the root filepath of the web application; used for saves, etc.
@@ -32,17 +26,14 @@ namespace IDCardDemo.Pages.Holders
 
         public Holder Holder { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
-        {
-            if (id == null)
-            {
+        public async Task<IActionResult> OnGetAsync(int? id) {
+            if (id == null) {
                 return NotFound();
             }
 
             Holder = await _context.Holder.FirstOrDefaultAsync(m => m.ID == id);
 
-            if (Holder == null)
-            {
+            if (Holder == null) {
                 return NotFound();
             }
             return Page();

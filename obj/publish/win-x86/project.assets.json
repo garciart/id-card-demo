@@ -11424,11 +11424,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Rob\\Source\\Repos\\id-card-demo\\IDCardDemo.csproj",
+      "projectUniqueName": "C:\\Users\\Rob\\source\\repos\\id-card-demo\\IDCardDemo.csproj",
       "projectName": "IDCardDemo",
-      "projectPath": "C:\\Users\\Rob\\Source\\Repos\\id-card-demo\\IDCardDemo.csproj",
+      "projectPath": "C:\\Users\\Rob\\source\\repos\\id-card-demo\\IDCardDemo.csproj",
       "packagesPath": "C:\\Users\\Rob\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Rob\\Source\\Repos\\id-card-demo\\obj\\publish\\win-x86\\",
+      "outputPath": "C:\\Users\\Rob\\source\\repos\\id-card-demo\\obj\\publish\\win-x86\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

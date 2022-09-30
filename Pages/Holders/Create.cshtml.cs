@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using IDCardDemo.Data;
 using IDCardDemo.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.Drawing;
@@ -152,7 +151,7 @@ namespace IDCardDemo.Pages.Holders {
             }
             catch (Exception e) {
                 status = String.Format("Could not add record: {0}", e);
-                 return Page();
+                return Page();
             }
             finally {
                 ViewData["Status"] = status;

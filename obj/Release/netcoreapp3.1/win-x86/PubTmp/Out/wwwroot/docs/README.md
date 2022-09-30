@@ -1819,8 +1819,8 @@ When finished, close the browser, then press [Ctrl]+[C] to continue.
 
 In order to use this application, and to prevent attackers from creating multiple ID cards, the user must log in. However, each card holder will not have an account. This application will only have three accounts: Sponsor, Manager, and Administrator:
 
-- Sponsor - Can access the Login, Main Page, Index, Create, Details, and Edit pages
-- Manager - Can access the Login, Main Page, Index, Create, Details, Edit, Print, and Delete pages
+- Sponsor - Can access the Login, Main Page, Details, Index, and Scan pages
+- Manager - Can access the Login, Main Page, Create, Delete, Details, Edit, Index, Print, and Scan pages
 - Administrator - Can access all pages and account administration
 
 Scaffold the **Register** and **Login** pages:
@@ -2209,19 +2209,272 @@ If you attempt to access https://localhost:44349/Identity/Account/Register, you 
 
 https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-3.1
 
-----------
-
-Create a ```web.config``` file and add the following lines:
+In the root directory, using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, create a file named ```SetupAAA.cs``` and add the following code:
 
 ```
-<?xml version="1.0" encoding="utf-8"?>
+using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+
+namespace IDCardDemo.SetupAAA {
+
+    public static class DefaultRoles {
+        public static async Task CreateRolesAsync(RoleManager<IdentityRole> roleManager) {
+            await roleManager.CreateAsync(new IdentityRole("Administrator"));
+            await roleManager.CreateAsync(new IdentityRole("Manager"));
+            await roleManager.CreateAsync(new IdentityRole("Sponsor"));
+        }
+    }
+
+    public static class DefaultUsers {
+        private static async Task AddRolesToUser(this UserManager<IdentityUser> userManager, IdentityUser appUser, List<string> desiredRoles) {
+            // Get the user's current roles
+            var currentRoles = await userManager.GetRolesAsync(appUser);
+
+            // Iterate through the desired roles. If the user is not currently in that role, assign it to them
+            foreach (var role in desiredRoles) {
+                if (!currentRoles.Contains(role.ToString())) {
+                    await userManager.AddToRoleAsync(appUser, role.ToString());
+                }
+            }
+        }
+
+        private static async Task AddClaimsToRole(this RoleManager<IdentityRole> roleManager, IdentityRole topRole, List<string> desiredPermissions) {
+            // Get the user's current claims
+            var claims = await roleManager.GetClaimsAsync(topRole);
+            // Iterate through the desired claims. If the user does not currently have that claim, give it to them
+            foreach (var permission in desiredPermissions) {
+                if (!claims.Any(a => a.Type == "Permission" && a.Value == permission)) {
+                    await roleManager.AddClaimAsync(topRole, new Claim("Permission", permission));
+                }
+            }
+        }
+
+        public static async Task CreateAdministratorAsync(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) {
+            var appUser = new IdentityUser {
+                UserName = "ADMIN"
+            };
+            if (userManager.Users.All(u => u.Id != appUser.Id)) {
+                // Look for the user
+                var user = await userManager.FindByNameAsync(appUser.UserName);
+                // Create if the user does not exist
+                if (user == null) {
+                    await userManager.CreateAsync(appUser, "Pa$$W0rd");
+                }
+
+                // This user will have the following roles
+                var desiredRoles = new List<string>() { "Administrator", "Manager", "Sponsor" };
+
+                // This will be the user's main role
+                var topRole = await roleManager.FindByNameAsync("Administrator");
+
+                // The user will have permission to access these files in the Holder directory
+                var module = "Holders";
+                var desiredPermissions = new List<string>() {
+                    $"Permissions.{module}.Create",
+                    $"Permissions.{module}.Delete",
+                    $"Permissions.{module}.Details",
+                    $"Permissions.{module}.Edit",
+                    $"Permissions.{module}.Index",
+                    $"Permissions.{module}.Print",
+                    $"Permissions.{module}.Scan",
+                };
+
+                // Add roles and claims
+                await userManager.AddRolesToUser(appUser, desiredRoles);
+                await roleManager.AddClaimsToRole(topRole, desiredPermissions);
+            }
+        }
+
+        public static async Task CreateManagerAsync(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) {
+            var appUser = new IdentityUser {
+                UserName = "MANAGER"
+            };
+            if (userManager.Users.All(u => u.Id != appUser.Id)) {
+                // Look for the user
+                var user = await userManager.FindByNameAsync(appUser.UserName);
+                // Create if the user does not exist
+                if (user == null) {
+                    await userManager.CreateAsync(appUser, "Pa$$W0rd");
+                }
+
+                // This user will have the following roles
+                var desiredRoles = new List<string>() { "Manager", "Sponsor" };
+
+                // This will be the user's main role
+                var topRole = await roleManager.FindByNameAsync("Manager");
+
+                // The user will have permission to access these files in the Holder directory
+                var module = "Holders";
+                var desiredPermissions = new List<string>() {
+                    $"Permissions.{module}.Create",
+                    $"Permissions.{module}.Delete",
+                    $"Permissions.{module}.Details",
+                    $"Permissions.{module}.Edit",
+                    $"Permissions.{module}.Index",
+                    $"Permissions.{module}.Print",
+                    $"Permissions.{module}.Scan",
+                };
+
+                // Add roles and claims
+                await userManager.AddRolesToUser(appUser, desiredRoles);
+                await roleManager.AddClaimsToRole(topRole, desiredPermissions);
+            }
+        }
+
+        public static async Task CreateSponsorAsync(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) {
+            var appUser = new IdentityUser {
+                UserName = "SPONSOR"
+            };
+            if (userManager.Users.All(u => u.Id != appUser.Id)) {
+                // Look for the user
+                var user = await userManager.FindByNameAsync(appUser.UserName);
+                // Create if the user does not exist
+                if (user == null) {
+                    await userManager.CreateAsync(appUser, "Pa$$W0rd");
+                }
+
+                // This user will have the following roles
+                var desiredRoles = new List<string>() { "Sponsor" };
+
+                // This will be the user's main role
+                var topRole = await roleManager.FindByNameAsync("Sponsor");
+
+                // The user will have permission to access these files in the Holder directory
+                var module = "Holders";
+                var desiredPermissions = new List<string>() {
+                    $"Permissions.{module}.Details",
+                    $"Permissions.{module}.Index",
+                    $"Permissions.{module}.Scan",
+                };
+
+                // Add roles and claims
+                await userManager.AddRolesToUser(appUser, desiredRoles);
+                await roleManager.AddClaimsToRole(topRole, desiredPermissions);
+            }
+        }
+    }
+}
+```
+
+In ```Startup.cs```, replace...
+
+```
+services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+	.AddRoles<IdentityRole>()
+	.AddEntityFrameworkStores<ApplicationDbContext>();
+```
+
+with...
+
+```
+services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+	.AddEntityFrameworkStores<ApplicationDbContext>();
+```
+
+In ```Program.cs```, replace...
+
+```
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
+namespace IDCardDemo
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args).Build().Run();
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
+}
+```
+
+with...
+
+```
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+
+namespace IDCardDemo {
+    public class Program
+    {
+        public async static Task Main(string[] args)
+        {
+            var host = CreateHostBuilder(args).Build();
+            using (var scope = host.Services.CreateScope()) {
+                var services = scope.ServiceProvider;
+                var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                var logger = loggerFactory.CreateLogger("app");
+                try {
+                    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    await SetupAAA.DefaultRoles.CreateRolesAsync(roleManager);
+                    await SetupAAA.DefaultUsers.CreateAdministratorAsync(userManager, roleManager);
+                    await SetupAAA.DefaultUsers.CreateManagerAsync(userManager, roleManager);
+                    await SetupAAA.DefaultUsers.CreateSponsorAsync(userManager, roleManager);
+                    logger.LogInformation("Finished setting up authentication and authorization.");
+                    logger.LogInformation("Application Starting");
+                }
+                catch (Exception ex) {
+                    logger.LogWarning(ex, "An error occurred setting up authentication and authorization.");
+                }
+            }
+            host.Run();
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
+}
+```
+
+dotnet ef migrations add -c ApplicationDbContext InitRoles
+dotnet ef database update -c ApplicationDbContext
+
+## Cleaning up
+
+
+
+----------
+
+## Publising Notes:
+
+For online debugging, create a ```web.config``` file and add the following lines:
+
+```
+﻿<?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <location path="." inheritInChildApplications="false">
     <system.webServer>
       <handlers>
         <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceType="Unspecified" />
       </handlers>
-      <aspNetCore processPath=".\CardDemo.exe" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="inprocess">
+      <aspNetCore processPath=".\IDCardDemo.exe" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="inprocess">
         <environmentVariables>
           <environmentVariable name="ASPNETCORE_ENVIRONMENT" value="Development" />
         </environmentVariables>
@@ -2231,12 +2484,13 @@ Create a ```web.config``` file and add the following lines:
 </configuration>
 ```
 
-
-**NOTE** - After deploying to the server, ensure that the **Application pool group** permissions for the ```App_Data``` directory, and both the ```wwwroot/photos``` and ```wwwroot/temp``` directories, are set to read and write. For example:
+After deploying to the server, ensure that the **Application pool group** permissions for the ```App_Data``` directory, and both the ```wwwroot/photos``` and ```wwwroot/temp``` directories, are set to read and write. For example:
 
 ![Permissions](card_demo_0X_permissions.png)
 
 Otherwise, you may encounter a ```SqliteException: SQLite Error 14: 'unable to open database file'.``` error.
+
+If you are using Visual Studio, and you encounter any problems with ```App_Data```, right click on the ```App_Data``` folder and select **Publish App_Data** folder.
 
 -----
 

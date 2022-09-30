@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace IDCardDemo.Areas.Identity.Data
-{
+namespace IDCardDemo.Areas.Identity.Data {
     public class IDCardDemoIdentityDbContext : IdentityDbContext<IdentityUser>
     {
         public IDCardDemoIdentityDbContext(DbContextOptions<IDCardDemoIdentityDbContext> options)

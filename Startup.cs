@@ -1,34 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.EntityFrameworkCore;
 using IDCardDemo.Data;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Http;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 
-namespace IDCardDemo
-{
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
+namespace IDCardDemo {
+    public class Startup {
+        public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
+        public void ConfigureServices(IServiceCollection services) {
             string appDBSource = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"App_Data\app.db");
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -45,21 +37,20 @@ namespace IDCardDemo
 
             // Create authorization policies
             services.AddAuthorization(options => {
-                options.AddPolicy("MustBeManager", policy =>
-                    policy.RequireRole("Manager"));
+                options.AddPolicy("ManagerOrAdminOnly", policy =>
+                    policy.RequireRole("Administrator", "Manager"));
             });
             // Restrict access to pages
             services.AddRazorPages(options => {
                 options.Conventions.AuthorizeFolder("/Holders");
-                options.Conventions.AuthorizePage("/Holders/Details", "MustBeManager");
+                options.Conventions.AuthorizePage("/Holders/Create", "ManagerOrAdminOnly");
             });
             // Needed to allow the app to save files to the wwwroot
             services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
 
 
 
-            services.Configure<IdentityOptions>(options =>
-            {
+            services.Configure<IdentityOptions>(options => {
                 // Password settings.
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
@@ -78,8 +69,7 @@ namespace IDCardDemo
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
             });
 
-            services.ConfigureApplicationCookie(options =>
-            {
+            services.ConfigureApplicationCookie(options => {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
@@ -91,15 +81,12 @@ namespace IDCardDemo
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+            if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
-            else
-            {
+            else {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
