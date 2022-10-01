@@ -10,6 +10,6 @@ namespace IDCardDemo.Data
         {
         }
 
-        public DbSet<IDCardDemo.Models.Holder> Holder { get; set; }
+        public DbSet<Models.Holder> Holder { get; set; }
     }
 }

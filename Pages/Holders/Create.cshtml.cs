@@ -1,20 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using IDCardDemo.Data;
+using IDCardDemo.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using IDCardDemo.Models;
-using Microsoft.AspNetCore.Hosting;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using ZXing;
 
 namespace IDCardDemo.Pages.Holders {
     public class CreateModel : PageModel {
-        private readonly IDCardDemo.Data.IDCardDemoContext _context;
+        private readonly IDCardDemoContext _context;
 
         // References to the HTML elements populated from the code-behind using loops, etc.
         public IEnumerable<SelectListItem> Heights { get; set; }
@@ -28,7 +29,7 @@ namespace IDCardDemo.Pages.Holders {
         // Holds the root filepath of the web application; used for saves, etc.
         private readonly IWebHostEnvironment _environment;
 
-        public CreateModel(IDCardDemo.Data.IDCardDemoContext context, IWebHostEnvironment environment) {
+        public CreateModel(IDCardDemoContext context, IWebHostEnvironment environment) {
             _context = context;
             _environment = environment;
 
@@ -130,7 +131,6 @@ namespace IDCardDemo.Pages.Holders {
                  Holder.Height,
                  Holder.EyeColor);
                 // Create and save barcode
-                // http://stackoverflow.com/questions/13289742/zxing-net-encode-string-to-qr-code-in-cf //
                 BarcodeWriter writer = new BarcodeWriter {
                     Format = BarcodeFormat.PDF_417,
                     Options = { Width = 342, Height = 100 },

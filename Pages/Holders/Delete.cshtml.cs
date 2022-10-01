@@ -1,21 +1,22 @@
-using System.Threading.Tasks;
+using IDCardDemo.Data;
+using IDCardDemo.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using IDCardDemo.Models;
-using Microsoft.AspNetCore.Hosting;
 using System.IO;
-using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace IDCardDemo.Pages.Holders {
     [Authorize(Roles = "Administrator, Manager")]
     public class DeleteModel : PageModel {
-        private readonly IDCardDemo.Data.IDCardDemoContext _context;
+        private readonly IDCardDemoContext _context;
 
         // Holds the root filepath of the web application; used for saves, etc.
         private readonly IWebHostEnvironment _environment;
 
-        public DeleteModel(IDCardDemo.Data.IDCardDemoContext context, IWebHostEnvironment environment) {
+        public DeleteModel(IDCardDemoContext context, IWebHostEnvironment environment) {
             _context = context;
             _environment = environment;
         }

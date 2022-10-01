@@ -1,14 +1,15 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using IDCardDemo.Data;
+using IDCardDemo.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using IDCardDemo.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IDCardDemo.Pages.Holders {
     public class IndexModel : PageModel {
-        private readonly IDCardDemo.Data.IDCardDemoContext _context;
+        private readonly IDCardDemoContext _context;
 
-        public IndexModel(IDCardDemo.Data.IDCardDemoContext context) {
+        public IndexModel(IDCardDemoContext context) {
             _context = context;
         }
 

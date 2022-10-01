@@ -1,23 +1,24 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using IDCardDemo.Data;
+using IDCardDemo.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using IDCardDemo.Models;
-using Microsoft.AspNetCore.Hosting;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using ZXing;
-using Microsoft.AspNetCore.Authorization;
 
 namespace IDCardDemo.Pages.Holders {
     [Authorize(Policy = "ManagerOrAdminOnly")]
     public class EditModel : PageModel {
-        private readonly IDCardDemo.Data.IDCardDemoContext _context;
+        private readonly IDCardDemoContext _context;
 
         // References to the HTML elements populated from the code-behind using loops, etc.
         public IEnumerable<SelectListItem> Heights { get; set; }
@@ -31,7 +32,7 @@ namespace IDCardDemo.Pages.Holders {
         // Holds the root filepath of the web application; used for saves, etc.
         private readonly IWebHostEnvironment _environment;
 
-        public EditModel(IDCardDemo.Data.IDCardDemoContext context, IWebHostEnvironment environment) {
+        public EditModel(IDCardDemoContext context, IWebHostEnvironment environment) {
             _context = context;
             _environment = environment;
 
@@ -111,45 +112,20 @@ namespace IDCardDemo.Pages.Holders {
                     return Page();
                 }
 
-                // Create the filename prefix
-                //string fixedLastName = RemoveSpecialCharacters(Holder.LastName.ToLower());
-                //string fixedFirstName = RemoveSpecialCharacters(Holder.FirstName.ToLower());
-                //string timeStamp = DateTime.Now.ToString("yyyMMddHHmmss");
-                //string userFileName = String.Format("{0}_{1}_{2}", fixedLastName.ToLower(), fixedFirstName.ToLower(), timeStamp);
-
-                // Rename image files if the member's LastName or FirstName fields changed
-                //if (!Holder.PhotoPath.StartsWith(userFileName)) {
-                //    System.IO.File.Move(
-                //        Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath),
-                //        Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_photo.png", userFileName))
-                //        );
-                //    Holder.PhotoPath = String.Format("{0}_photo.png", userFileName);
-
-                //    System.IO.File.Move(
-                //        Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath),
-                //        Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_sign.png", userFileName))
-                //        );
-                //    Holder.SignaturePath = String.Format("{0}_sign.png", userFileName);
-
-                //    System.IO.File.Move(
-                //        Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path),
-                //        Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_code.png", userFileName))
-                //        );
-                //    Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
-                //}
-
                 // Update images if new ones were made
                 if (photoUploaded) {
                     // Copy the temp images to photo folder and rename them using the member data
-                    string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
-                    //Holder.PhotoPath = String.Format("{0}_photo.png", userFileName);
-                    System.IO.File.Copy(photoImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath), true);
+                    string tempImageFilePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
+                    string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath);
+                    UpdateImageFiles(tempImageFilePath, photoImagePath);
+                    // System.IO.File.Copy(tempImageFilePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath), true);
                 }
 
                 if (signatureUploaded) {
-                    string signatureImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
-                    //Holder.SignaturePath = String.Format("{0}_sign.png", userFileName);
-                    System.IO.File.Copy(signatureImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath), true);
+                    string tempImageFilePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
+                    string signatureImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath);
+                    UpdateImageFiles(tempImageFilePath, signatureImagePath);
+                    // System.IO.File.Copy(signatureImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath), true);
                 }
 
                 // Prepare barcode info
@@ -163,7 +139,6 @@ namespace IDCardDemo.Pages.Holders {
                  Holder.Height,
                  Holder.EyeColor);
                 // Create and save barcode
-                // http://stackoverflow.com/questions/13289742/zxing-net-encode-string-to-qr-code-in-cf //
                 BarcodeWriter writer = new BarcodeWriter {
                     Format = BarcodeFormat.PDF_417,
                     Options = { Width = 342, Height = 100 },
@@ -171,7 +146,6 @@ namespace IDCardDemo.Pages.Holders {
                 Bitmap barcodeBitmap;
                 writer.Options.Margin = 0;
                 barcodeBitmap = writer.Write(memberInfo);
-                //Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
                 barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
                 barcodeBitmap.Dispose();
 
@@ -203,6 +177,11 @@ namespace IDCardDemo.Pages.Holders {
                 photoUploaded = false;
                 signatureUploaded = false;
             }
+        }
+
+        public static void UpdateImageFiles(string tempImageFilePath, string targetImageFilePath) {
+            byte[] tempImageBytes = System.IO.File.ReadAllBytes(tempImageFilePath);
+            System.IO.File.WriteAllBytes(targetImageFilePath, tempImageBytes);
         }
 
         // Special thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string

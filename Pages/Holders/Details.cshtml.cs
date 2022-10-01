@@ -1,25 +1,26 @@
-using System;
-using System.Threading.Tasks;
+using IDCardDemo.Data;
+using IDCardDemo.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using IDCardDemo.Models;
-using Microsoft.AspNetCore.Hosting;
-using System.Drawing;
-using System.IO;
-using PdfSharp.Pdf;
 using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using System;
+using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace IDCardDemo.Pages.Holders {
     public class DetailsModel : PageModel {
-        private readonly IDCardDemo.Data.IDCardDemoContext _context;
+        private readonly IDCardDemoContext _context;
 
         // Holds the root filepath of the web application; used for saves, etc.
         private readonly IWebHostEnvironment _environment;
 
-        public DetailsModel(IDCardDemo.Data.IDCardDemoContext context, IWebHostEnvironment environment) {
+        public DetailsModel(IDCardDemoContext context, IWebHostEnvironment environment) {
             _context = context;
             _environment = environment;
         }
@@ -71,7 +72,7 @@ namespace IDCardDemo.Pages.Holders {
 
             // Create font and brush, then add info
             Font drawFont = new Font("Arial", 13f, FontStyle.Bold);
-            SolidBrush drawBrush = new SolidBrush(System.Drawing.Color.Black);
+            SolidBrush drawBrush = new SolidBrush(Color.Black);
             id_front_Graphics.DrawString(String.Format("{0},\r\n{1} {2}\r\n\r\n1 MAIN ST\r\nANY TOWN, MD 12345\r\n\r\nDOB: {3}\r\nSEX: {4} / HT: {5}\"\r\nEYES: {6}", Holder.LastName, Holder.FirstName, Holder.MI, Holder.DOB.ToShortDateString(), Holder.Gender, Holder.Height, Holder.EyeColor), drawFont, drawBrush, 92, 45);
 
             // Draw back of card

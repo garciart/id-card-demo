@@ -23,6 +23,8 @@
 
 >**NOTE** - This is a customization of the instructions found at https://docs.microsoft.com/en-us/aspnet/core/tutorials/razor-pages/razor-pages-start?view=aspnetcore-3.1&tabs=visual-studio-code.
 
+>**NOTE** - If any issues arise, look at the actual code. I may have updated the code, but not the README.md.
+
 ## Setup
 
 Open a Windows Terminal and ensure the latest version of .NET Core SDK 3.1, is installed:
@@ -1096,7 +1098,6 @@ public async Task<IActionResult> OnPostAsync() {
 		 Holder.Height,
 		 Holder.EyeColor);
 		// Create and save barcode
-		// http://stackoverflow.com/questions/13289742/zxing-net-encode-string-to-qr-code-in-cf //
 		BarcodeWriter writer = new BarcodeWriter {
 			Format = BarcodeFormat.PDF_417,
 			Options = { Width = 342, Height = 100 },
@@ -1293,45 +1294,18 @@ public async Task<IActionResult> OnPostAsync() {
 			return Page();
 		}
 
-		// Create the filename prefix
-		string fixedLastName = RemoveSpecialCharacters(Holder.LastName.ToLower());
-		string fixedFirstName = RemoveSpecialCharacters(Holder.FirstName.ToLower());
-		string timeStamp = DateTime.Now.ToString("yyyMMddHHmmss");
-		string userFileName = String.Format("{0}_{1}_{2}", fixedLastName.ToLower(), fixedFirstName.ToLower(), timeStamp);
-
-		// Rename image files if the member's LastName or FirstName fields changed
-		if (!Holder.PhotoPath.StartsWith(userFileName)) {
-			System.IO.File.Move(
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath),
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_photo.png", userFileName))
-				);
-			Holder.PhotoPath = String.Format("{0}_photo.png", userFileName);
-
-			System.IO.File.Move(
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath),
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_sign.png", userFileName))
-				);
-			Holder.SignaturePath = String.Format("{0}_sign.png", userFileName);
-
-			System.IO.File.Move(
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path),
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_code.png", userFileName))
-				);
-			Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
-		}
-
 		// Update images if new ones were made
 		if (photoUploaded) {
 			// Copy the temp images to photo folder and rename them using the member data
-			string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
-			Holder.PhotoPath = String.Format("{0}_photo.png", userFileName);
-			System.IO.File.Copy(photoImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath), true);
+			string tempImageFilePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
+			string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath);
+			UpdateImageFiles(tempImageFilePath, photoImagePath);
 		}
 
 		if (signatureUploaded) {
-			string signatureImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
-			Holder.SignaturePath = String.Format("{0}_sign.png", userFileName);
-			System.IO.File.Copy(signatureImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath), true);
+			string tempImageFilePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
+			string signatureImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath);
+			UpdateImageFiles(tempImageFilePath, signatureImagePath);
 		}
 
 		// Prepare barcode info
@@ -1345,7 +1319,6 @@ public async Task<IActionResult> OnPostAsync() {
 		 Holder.Height,
 		 Holder.EyeColor);
 		// Create and save barcode
-		// http://stackoverflow.com/questions/13289742/zxing-net-encode-string-to-qr-code-in-cf //
 		BarcodeWriter writer = new BarcodeWriter {
 			Format = BarcodeFormat.PDF_417,
 			Options = { Width = 342, Height = 100 },
@@ -1353,7 +1326,7 @@ public async Task<IActionResult> OnPostAsync() {
 		Bitmap barcodeBitmap;
 		writer.Options.Margin = 0;
 		barcodeBitmap = writer.Write(memberInfo);
-		Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
+		//Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
 		barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
 		barcodeBitmap.Dispose();
 
@@ -1391,6 +1364,11 @@ public async Task<IActionResult> OnPostAsync() {
 Add the following method after ```OnPostAsync```:
 
 ```
+public static void UpdateImageFiles(string tempImageFilePath, string targetImageFilePath) {
+	byte[] tempImageBytes = System.IO.File.ReadAllBytes(tempImageFilePath);
+	System.IO.File.WriteAllBytes(targetImageFilePath, tempImageBytes);
+}
+
 // Special thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
 public static string RemoveSpecialCharacters(string str) {
 	StringBuilder sb = new StringBuilder();
@@ -2405,24 +2383,42 @@ You may have noticed that you did not do any styling, and you used the default s
 To get the application ready for deployment, use the ```dotnet publish``` command:
 
 ```
-dotnet publish [<PROJECT>|<SOLUTION>] [-a|--arch <ARCHITECTURE>]
-    [-c|--configuration <CONFIGURATION>]
-    [-f|--framework <FRAMEWORK>] [--force] [--interactive]
-    [--manifest <PATH_TO_MANIFEST_FILE>] [--no-build] [--no-dependencies]
-    [--no-restore] [--nologo] [-o|--output <OUTPUT_DIRECTORY>]
-    [--os <OS>] [-r|--runtime <RUNTIME_IDENTIFIER>]
-    [--sc|--self-contained [true|false]] [--no-self-contained]
-    [-s|--source <SOURCE>] [-v|--verbosity <LEVEL>]
-    [--version-suffix <VERSION_SUFFIX>]
+Usage: dotnet publish [options] <PROJECT | SOLUTION>
 
-dotnet publish -h|--help
+Arguments:
+  <PROJECT | SOLUTION>   The project or solution file to operate on. If a file is not specified, the command will search the current directory for one.
+
+Options:
+  -h, --help                            Show command line help.
+  -o, --output <OUTPUT_DIR>             The output directory to place the published artifacts in.
+  -f, --framework <FRAMEWORK>           The target framework to publish for. The target framework has to be specified in the project file.
+  -r, --runtime <RUNTIME_IDENTIFIER>    The target runtime to publish for. This is used when creating a self-contained deployment.
+                                        The default is to publish a framework-dependent application.
+  -c, --configuration <CONFIGURATION>   The configuration to publish for. The default for most projects is 'Debug'.
+  --version-suffix <VERSION_SUFFIX>     Set the value of the $(VersionSuffix) property to use when building the project.
+  --manifest <MANIFEST>                 The path to a target manifest file that contains the list of packages to be excluded from the publish step.
+  --no-build                            Do not build the project before publishing. Implies --no-restore.
+  --self-contained                      Publish the .NET runtime with your application so the runtime doesn't need to be installed on the target machine.
+                                        The default is 'true' if a runtime identifier is specified.
+  --no-self-contained                   Publish your application as a framework dependent application without the .NET runtime. A supported .NET runtime must be installed to run your application.
+  --nologo                              Do not display the startup banner or the copyright message.
+  --interactive                         Allows the command to stop and wait for user input or action (for example to complete authentication).
+  --no-restore                          Do not restore the project before building.
+  -v, --verbosity <LEVEL>               Set the MSBuild verbosity level. Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic].
+  --no-dependencies                     Do not restore project-to-project references and only restore the specified project.
+  --force                               Force all dependencies to be resolved even if the last restore was successful.
+                                        This is equivalent to deleting project.assets.json.
 ```
 
 In the root directory, enter:
 
 ```
-dotnet publish -c Release --force -p:PublishTrimmed=true -r win-x86 --sc
+dotnet publish -c Release --force -p:PublishTrimmed=true -r win-x86 --self-contained
 ```
+
+Once the above command is complete, the application files can be found in ```id-card-demo\bin\Release\netcoreapp3.1\win-x86\publish```.
+
+Using a file transfer application, you can upload the contents of that file to your server's http directory.
 
 For online debugging, create a ```web.config``` file and add the following lines:
 

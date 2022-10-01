@@ -23,6 +23,8 @@
 
 >**NOTE** - This is a customization of the instructions found at https://docs.microsoft.com/en-us/aspnet/core/tutorials/razor-pages/razor-pages-start?view=aspnetcore-3.1&tabs=visual-studio-code.
 
+>**NOTE** - If any issues arise, look at the actual code. I may have updated the code, but not the README.md.
+
 ## Setup
 
 Open a Windows Terminal and ensure the latest version of .NET Core SDK 3.1, is installed:
@@ -172,7 +174,7 @@ Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001
 
 ![First Run](card_demo_01_id.png)
 
-When finished, close the browser, then press [Ctrl]+[C] to continue.
+When finished, close the browser, then press <kbd>Ctrl</kbd> + <kbd>C</kbd> to continue.
 
 -----
 
@@ -329,7 +331,7 @@ Once you click on **Delete**, you will be redirected to an empty list of holders
 
 ![Holder Deleted](card_demo_09_deleted.png)
 
-When finished, close the browser, then press [Ctrl]+[C] to continue.
+When finished, close the browser, then press <kbd>Ctrl</kbd> + <kbd>C</kbd> to continue.
 
 -----
 
@@ -1096,7 +1098,6 @@ public async Task<IActionResult> OnPostAsync() {
 		 Holder.Height,
 		 Holder.EyeColor);
 		// Create and save barcode
-		// http://stackoverflow.com/questions/13289742/zxing-net-encode-string-to-qr-code-in-cf //
 		BarcodeWriter writer = new BarcodeWriter {
 			Format = BarcodeFormat.PDF_417,
 			Options = { Width = 342, Height = 100 },
@@ -1293,45 +1294,18 @@ public async Task<IActionResult> OnPostAsync() {
 			return Page();
 		}
 
-		// Create the filename prefix
-		string fixedLastName = RemoveSpecialCharacters(Holder.LastName.ToLower());
-		string fixedFirstName = RemoveSpecialCharacters(Holder.FirstName.ToLower());
-		string timeStamp = DateTime.Now.ToString("yyyMMddHHmmss");
-		string userFileName = String.Format("{0}_{1}_{2}", fixedLastName.ToLower(), fixedFirstName.ToLower(), timeStamp);
-
-		// Rename image files if the member's LastName or FirstName fields changed
-		if (!Holder.PhotoPath.StartsWith(userFileName)) {
-			System.IO.File.Move(
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath),
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_photo.png", userFileName))
-				);
-			Holder.PhotoPath = String.Format("{0}_photo.png", userFileName);
-
-			System.IO.File.Move(
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath),
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_sign.png", userFileName))
-				);
-			Holder.SignaturePath = String.Format("{0}_sign.png", userFileName);
-
-			System.IO.File.Move(
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path),
-				Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", String.Format("{0}_code.png", userFileName))
-				);
-			Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
-		}
-
 		// Update images if new ones were made
 		if (photoUploaded) {
 			// Copy the temp images to photo folder and rename them using the member data
-			string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
-			Holder.PhotoPath = String.Format("{0}_photo.png", userFileName);
-			System.IO.File.Copy(photoImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath), true);
+			string tempImageFilePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
+			string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath);
+			UpdateImageFiles(tempImageFilePath, photoImagePath);
 		}
 
 		if (signatureUploaded) {
-			string signatureImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
-			Holder.SignaturePath = String.Format("{0}_sign.png", userFileName);
-			System.IO.File.Copy(signatureImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath), true);
+			string tempImageFilePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
+			string signatureImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath);
+			UpdateImageFiles(tempImageFilePath, signatureImagePath);
 		}
 
 		// Prepare barcode info
@@ -1345,7 +1319,6 @@ public async Task<IActionResult> OnPostAsync() {
 		 Holder.Height,
 		 Holder.EyeColor);
 		// Create and save barcode
-		// http://stackoverflow.com/questions/13289742/zxing-net-encode-string-to-qr-code-in-cf //
 		BarcodeWriter writer = new BarcodeWriter {
 			Format = BarcodeFormat.PDF_417,
 			Options = { Width = 342, Height = 100 },
@@ -1353,7 +1326,7 @@ public async Task<IActionResult> OnPostAsync() {
 		Bitmap barcodeBitmap;
 		writer.Options.Margin = 0;
 		barcodeBitmap = writer.Write(memberInfo);
-		Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
+		//Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
 		barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
 		barcodeBitmap.Dispose();
 
@@ -1391,6 +1364,11 @@ public async Task<IActionResult> OnPostAsync() {
 Add the following method after ```OnPostAsync```:
 
 ```
+public static void UpdateImageFiles(string tempImageFilePath, string targetImageFilePath) {
+	byte[] tempImageBytes = System.IO.File.ReadAllBytes(tempImageFilePath);
+	System.IO.File.WriteAllBytes(targetImageFilePath, tempImageBytes);
+}
+
 // Special thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
 public static string RemoveSpecialCharacters(string str) {
 	StringBuilder sb = new StringBuilder();
@@ -1630,7 +1608,7 @@ Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001
 
 ![New Delete Page](card_demo_21_new_delete.png)
 
-When finished, close the browser, then press [Ctrl]+[C] to continue.
+When finished, close the browser, then press <kbd>Ctrl</kbd> + <kbd>C</kbd> to continue.
 
 -----
 
@@ -1807,7 +1785,7 @@ Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001
 
 ![Card Printed](card_demo_23_card_printed.png)
 
-When finished, close the browser, then press [Ctrl]+[C] to continue.
+When finished, close the browser, then press <kbd>Ctrl</kbd> + <kbd>C</kbd> to continue.
 
 -----
 
@@ -2073,11 +2051,11 @@ Make sure you can log back in:
 
 Log out and repeat this process for the Manager and Sponsor accounts.
 
-When finished, close the browser, then press [Ctrl]+[C] to continue.
+When finished, close the browser, then press <kbd>Ctrl</kbd> + <kbd>C</kbd> to continue.
 
 ### Part II
 
-Lock down the application by requiring an authorized user to access the main page and the pages in the Holders directory. There are two ways of doing this.
+Lock down the application by requiring an authenticated user to access the main page and the pages in the Holders directory. There are two ways of doing this.
 
 **First Way:** In ```Pages/Index.cshtml.cs``` (not ```Pages/Holders/Index.cshtml.cs```), add the following reference (at the top of the file):
 
@@ -2119,7 +2097,7 @@ You are redirected to the Login page.
 
 ![Blocked](card_demo_28_blocked.png)
 
-However, since you did not lock down the Privacy page, you can still access it:
+However, since you did not lock down the Privacy page, unauthenticated users can still access it:
 
 ![Not Blocked](card_demo_29_not_blocked.png)
 
@@ -2133,7 +2111,7 @@ https://localhost:44349/images/id_card_front.png
 
 Dang! Attackers may be able to access photos, signatures, etc.
 
-Close the browser, then press [Ctrl]+[C] to continue.
+Close the browser, then press <kbd>Ctrl</kbd> + <kbd>C</kbd> to continue.
 
 Open ```Startup.cs```.
 
@@ -2207,174 +2185,9 @@ If you attempt to access https://localhost:44349/Identity/Account/Register, you 
 
 ## Adding Role-based authorization
 
-https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-3.1
+Fine-tune access to pages and methods using authorization.
 
-In the root directory, using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, create a file named ```SetupAAA.cs``` and add the following code:
-
-```
-using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-
-namespace IDCardDemo.SetupAAA {
-
-    public static class DefaultRoles {
-        public static async Task CreateRolesAsync(RoleManager<IdentityRole> roleManager) {
-            await roleManager.CreateAsync(new IdentityRole("Administrator"));
-            await roleManager.CreateAsync(new IdentityRole("Manager"));
-            await roleManager.CreateAsync(new IdentityRole("Sponsor"));
-        }
-    }
-
-    public static class DefaultUsers {
-        private static async Task AddRolesToUser(this UserManager<IdentityUser> userManager, IdentityUser appUser, List<string> desiredRoles) {
-            // Get the user's current roles
-            var currentRoles = await userManager.GetRolesAsync(appUser);
-
-            // Iterate through the desired roles. If the user is not currently in that role, assign it to them
-            foreach (var role in desiredRoles) {
-                if (!currentRoles.Contains(role.ToString())) {
-                    await userManager.AddToRoleAsync(appUser, role.ToString());
-                }
-            }
-        }
-
-        private static async Task AddClaimsToRole(this RoleManager<IdentityRole> roleManager, IdentityRole topRole, List<string> desiredPermissions) {
-            // Get the user's current claims
-            var claims = await roleManager.GetClaimsAsync(topRole);
-            // Iterate through the desired claims. If the user does not currently have that claim, give it to them
-            foreach (var permission in desiredPermissions) {
-                if (!claims.Any(a => a.Type == "Permission" && a.Value == permission)) {
-                    await roleManager.AddClaimAsync(topRole, new Claim("Permission", permission));
-                }
-            }
-        }
-
-        public static async Task CreateAdministratorAsync(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) {
-            var appUser = new IdentityUser {
-                UserName = "ADMIN"
-            };
-            if (userManager.Users.All(u => u.Id != appUser.Id)) {
-                // Look for the user
-                var user = await userManager.FindByNameAsync(appUser.UserName);
-                // Create if the user does not exist
-                if (user == null) {
-                    await userManager.CreateAsync(appUser, "Pa$$W0rd");
-                }
-
-                // This user will have the following roles
-                var desiredRoles = new List<string>() { "Administrator", "Manager", "Sponsor" };
-
-                // This will be the user's main role
-                var topRole = await roleManager.FindByNameAsync("Administrator");
-
-                // The user will have permission to access these files in the Holder directory
-                var module = "Holders";
-                var desiredPermissions = new List<string>() {
-                    $"Permissions.{module}.Create",
-                    $"Permissions.{module}.Delete",
-                    $"Permissions.{module}.Details",
-                    $"Permissions.{module}.Edit",
-                    $"Permissions.{module}.Index",
-                    $"Permissions.{module}.Print",
-                    $"Permissions.{module}.Scan",
-                };
-
-                // Add roles and claims
-                await userManager.AddRolesToUser(appUser, desiredRoles);
-                await roleManager.AddClaimsToRole(topRole, desiredPermissions);
-            }
-        }
-
-        public static async Task CreateManagerAsync(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) {
-            var appUser = new IdentityUser {
-                UserName = "MANAGER"
-            };
-            if (userManager.Users.All(u => u.Id != appUser.Id)) {
-                // Look for the user
-                var user = await userManager.FindByNameAsync(appUser.UserName);
-                // Create if the user does not exist
-                if (user == null) {
-                    await userManager.CreateAsync(appUser, "Pa$$W0rd");
-                }
-
-                // This user will have the following roles
-                var desiredRoles = new List<string>() { "Manager", "Sponsor" };
-
-                // This will be the user's main role
-                var topRole = await roleManager.FindByNameAsync("Manager");
-
-                // The user will have permission to access these files in the Holder directory
-                var module = "Holders";
-                var desiredPermissions = new List<string>() {
-                    $"Permissions.{module}.Create",
-                    $"Permissions.{module}.Delete",
-                    $"Permissions.{module}.Details",
-                    $"Permissions.{module}.Edit",
-                    $"Permissions.{module}.Index",
-                    $"Permissions.{module}.Print",
-                    $"Permissions.{module}.Scan",
-                };
-
-                // Add roles and claims
-                await userManager.AddRolesToUser(appUser, desiredRoles);
-                await roleManager.AddClaimsToRole(topRole, desiredPermissions);
-            }
-        }
-
-        public static async Task CreateSponsorAsync(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) {
-            var appUser = new IdentityUser {
-                UserName = "SPONSOR"
-            };
-            if (userManager.Users.All(u => u.Id != appUser.Id)) {
-                // Look for the user
-                var user = await userManager.FindByNameAsync(appUser.UserName);
-                // Create if the user does not exist
-                if (user == null) {
-                    await userManager.CreateAsync(appUser, "Pa$$W0rd");
-                }
-
-                // This user will have the following roles
-                var desiredRoles = new List<string>() { "Sponsor" };
-
-                // This will be the user's main role
-                var topRole = await roleManager.FindByNameAsync("Sponsor");
-
-                // The user will have permission to access these files in the Holder directory
-                var module = "Holders";
-                var desiredPermissions = new List<string>() {
-                    $"Permissions.{module}.Details",
-                    $"Permissions.{module}.Index",
-                    $"Permissions.{module}.Scan",
-                };
-
-                // Add roles and claims
-                await userManager.AddRolesToUser(appUser, desiredRoles);
-                await roleManager.AddClaimsToRole(topRole, desiredPermissions);
-            }
-        }
-    }
-}
-```
-
-In ```Startup.cs```, replace...
-
-```
-services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-	.AddRoles<IdentityRole>()
-	.AddEntityFrameworkStores<ApplicationDbContext>();
-```
-
-with...
-
-```
-services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-	.AddEntityFrameworkStores<ApplicationDbContext>();
-```
-
-In ```Program.cs```, replace...
+First, create the roles. In the root directory, using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open ```Program.cs```, replace...
 
 ```
 using System;
@@ -2412,57 +2225,200 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
 
 namespace IDCardDemo {
-    public class Program
-    {
-        public async static Task Main(string[] args)
-        {
+    public class Program {
+        public async static Task Main(string[] args) { 
             var host = CreateHostBuilder(args).Build();
             using (var scope = host.Services.CreateScope()) {
                 var services = scope.ServiceProvider;
-                var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-                var logger = loggerFactory.CreateLogger("app");
-                try {
-                    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                    await SetupAAA.DefaultRoles.CreateRolesAsync(roleManager);
-                    await SetupAAA.DefaultUsers.CreateAdministratorAsync(userManager, roleManager);
-                    await SetupAAA.DefaultUsers.CreateManagerAsync(userManager, roleManager);
-                    await SetupAAA.DefaultUsers.CreateSponsorAsync(userManager, roleManager);
-                    logger.LogInformation("Finished setting up authentication and authorization.");
-                    logger.LogInformation("Application Starting");
-                }
-                catch (Exception ex) {
-                    logger.LogWarning(ex, "An error occurred setting up authentication and authorization.");
-                }
+                var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+                // Create roles
+                await roleManager.CreateAsync(new IdentityRole("Administrator"));
+                await roleManager.CreateAsync(new IdentityRole("Manager"));
+                await roleManager.CreateAsync(new IdentityRole("Sponsor"));
+
+                // Assign roles to users
+                var user = await userManager.FindByNameAsync("ADMIN");
+                var role = await roleManager.FindByNameAsync("Administrator");
+                await userManager.AddToRolesAsync(user, new[] { "Administrator", "Manager", "Sponsor" });
+
+                user = await userManager.FindByNameAsync("MANAGER");
+                role = await roleManager.FindByNameAsync("Manager");
+                await userManager.AddToRolesAsync(user, new[] { "Manager", "Sponsor" });
+
+                user = await userManager.FindByNameAsync("SPONSOR");
+                role = await roleManager.FindByNameAsync("Sponsor");
+                await userManager.AddToRolesAsync(user, new[] { "Sponsor" });
             }
             host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
+                .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseStartup<Startup>();
                 });
     }
 }
 ```
 
+Lock down parts of the application by allowing Administrators and Managers to access the **Create**, **Delete**, and **Edit** pages. There are several ways of doing this.
+
+Open ```Startup.cs``` and replace...
+
+```
+services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+	.AddEntityFrameworkStores<ApplicationDbContext>();
+	
+services.AddRazorPages(options => {
+	options.Conventions.AuthorizeFolder("/Holders");
+});
+```
+
+with...
+
+```
+services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+	.AddRoles<IdentityRole>()
+	.AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Create authorization policies
+services.AddAuthorization(options => {
+	options.AddPolicy("ManagerOrAdminOnly", policy =>
+		policy.RequireRole("Administrator", "Manager"));
+});
+// Restrict access to pages
+services.AddRazorPages(options => {
+	options.Conventions.AuthorizeFolder("/Holders");
+	options.Conventions.AuthorizePage("/Holders/Create", "ManagerOrAdminOnly");
+});
+```
+
+In ```Pages\Holders\Delete.cshtml.cs```, replace...
+
+```
+using Microsoft.AspNetCore.Authorization;
+
+namespace IDCardDemo.Pages.Holders {
+    public class DeleteModel : PageModel
+```
+
+with...
+
+```
+using Microsoft.AspNetCore.Authorization;
+
+namespace IDCardDemo.Pages.Holders {
+    [Authorize(Roles = "Administrator, Manager")]
+    public class DeleteModel : PageModel
+```
+
+In ```Pages\Holders\Edit.cshtml.cs```, replace...
+
+```
+using Microsoft.AspNetCore.Authorization;
+
+namespace IDCardDemo.Pages.Holders {
+    public class EditModel : PageModel {
+```
+
+with...
+
+```
+using Microsoft.AspNetCore.Authorization;
+
+namespace IDCardDemo.Pages.Holders {
+    [Authorize(Policy = "ManagerOrAdminOnly")]
+    public class EditModel : PageModel {
+```
+
+Start the app using IIS:
+
+```
+dotnet clean
+dotnet build
+dotnet run
+```
+
+Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001). The Login page will appear.
+
+Login as a Sponsor.
+
+Access the list of card holders. From there, click on **Create New**, **Delete**, or **Edit**:
+
+![Blocked](card_demo_32_role_blocked.png)
+
+Close the browser, then press <kbd>Ctrl</kbd> + <kbd>C</kbd> to continue.
+
+Commit database changes by performing a migration:
+
+```
 dotnet ef migrations add -c ApplicationDbContext InitRoles
 dotnet ef database update -c ApplicationDbContext
+```
 
 ## Cleaning up
 
+Unfortunately, scaffolding may leave you with unused namespaces. For example, in ```Startup.cs```, neither of the following namespaces are used:
 
+```
+using System.Collections.Generic;
+using System.Linq;
+```
+
+You can use an IDE to clean them up. For example, in Visual Studio, you can right click on the usings, and select *Remove and Sort Usings* (<kbd>Ctrl</kbd> + <kbd>R</kbd>, <kbd>Ctrl</kbd> + <kbd>G</kbd>).
+
+You can also reformat the document by clicking on **Edit** -> **Advanced** -> **Format Document** (<kbd>Ctrl</kbd> + <kbd>K</kbd>, <kbd>Ctrl</kbd> + <kbd>D</kbd>).
+
+You may have noticed that you did not do any styling, and you used the default styling. You may customize the appearance of the application to fit your tastes using Bootstrap at https://getbootstrap.com/.
 
 ----------
 
 ## Publising Notes:
+
+To get the application ready for deployment, use the ```dotnet publish``` command:
+
+```
+Usage: dotnet publish [options] <PROJECT | SOLUTION>
+
+Arguments:
+  <PROJECT | SOLUTION>   The project or solution file to operate on. If a file is not specified, the command will search the current directory for one.
+
+Options:
+  -h, --help                            Show command line help.
+  -o, --output <OUTPUT_DIR>             The output directory to place the published artifacts in.
+  -f, --framework <FRAMEWORK>           The target framework to publish for. The target framework has to be specified in the project file.
+  -r, --runtime <RUNTIME_IDENTIFIER>    The target runtime to publish for. This is used when creating a self-contained deployment.
+                                        The default is to publish a framework-dependent application.
+  -c, --configuration <CONFIGURATION>   The configuration to publish for. The default for most projects is 'Debug'.
+  --version-suffix <VERSION_SUFFIX>     Set the value of the $(VersionSuffix) property to use when building the project.
+  --manifest <MANIFEST>                 The path to a target manifest file that contains the list of packages to be excluded from the publish step.
+  --no-build                            Do not build the project before publishing. Implies --no-restore.
+  --self-contained                      Publish the .NET runtime with your application so the runtime doesn't need to be installed on the target machine.
+                                        The default is 'true' if a runtime identifier is specified.
+  --no-self-contained                   Publish your application as a framework dependent application without the .NET runtime. A supported .NET runtime must be installed to run your application.
+  --nologo                              Do not display the startup banner or the copyright message.
+  --interactive                         Allows the command to stop and wait for user input or action (for example to complete authentication).
+  --no-restore                          Do not restore the project before building.
+  -v, --verbosity <LEVEL>               Set the MSBuild verbosity level. Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic].
+  --no-dependencies                     Do not restore project-to-project references and only restore the specified project.
+  --force                               Force all dependencies to be resolved even if the last restore was successful.
+                                        This is equivalent to deleting project.assets.json.
+```
+
+In the root directory, enter:
+
+```
+dotnet publish -c Release --force -p:PublishTrimmed=true -r win-x86 --self-contained
+```
+
+Once the above command is complete, the application files can be found in ```id-card-demo\bin\Release\netcoreapp3.1\win-x86\publish```.
+
+Using a file transfer application, you can upload the contents of that file to your server's http directory.
 
 For online debugging, create a ```web.config``` file and add the following lines:
 
