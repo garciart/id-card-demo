@@ -118,14 +118,12 @@ namespace IDCardDemo.Pages.Holders {
                     string tempImageFilePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
                     string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath);
                     UpdateImageFiles(tempImageFilePath, photoImagePath);
-                    // System.IO.File.Copy(tempImageFilePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath), true);
                 }
 
                 if (signatureUploaded) {
                     string tempImageFilePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_signature.png");
                     string signatureImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath);
                     UpdateImageFiles(tempImageFilePath, signatureImagePath);
-                    // System.IO.File.Copy(signatureImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath), true);
                 }
 
                 // Prepare barcode info
@@ -179,13 +177,38 @@ namespace IDCardDemo.Pages.Holders {
             }
         }
 
-        public static void UpdateImageFiles(string tempImageFilePath, string targetImageFilePath) {
-            byte[] tempImageBytes = System.IO.File.ReadAllBytes(tempImageFilePath);
-            System.IO.File.WriteAllBytes(targetImageFilePath, tempImageBytes);
+        private static void UpdateImageFiles(string tempImageFilePath, string targetImageFilePath) {
+            // Attempt to update the file 10 times before raising an error
+            for (int x = 0; x <= 10; x++) {
+                if (!IsFileLocked(new FileInfo(tempImageFilePath)) || !IsFileLocked(new FileInfo(targetImageFilePath))) {
+                    System.IO.File.Copy(tempImageFilePath, targetImageFilePath, true);
+                    // byte[] tempImageBytes = System.IO.File.ReadAllBytes(tempImageFilePath);
+                    // System.IO.File.WriteAllBytes(targetImageFilePath, tempImageBytes);
+                    return;
+                }
+                // Wait 0.1 seconds before trying again
+                System.Threading.Thread.Sleep(100);
+            }
+            throw new System.IO.IOException(string.Format("Images are locked."));
+            
         }
 
-        // Special thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
-        public static string RemoveSpecialCharacters(string str) {
+        // Thanks to ChrisW https://stackoverflow.com/questions/876473/is-there-a-way-to-check-if-a-file-is-in-use
+        private static bool IsFileLocked(FileInfo file) {
+            // Check if file is accessible
+            try {
+                using FileStream stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None); stream.Close();
+            }
+            catch (IOException) {
+                // The file is inaccessible because it is still being written; it is being processed by another thread; or it does not exist (has already been processed)
+                return true;
+            }
+            // The file is not locked
+            return false;
+        }
+
+        // Thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
+        private static string RemoveSpecialCharacters(string str) {
             StringBuilder sb = new StringBuilder();
             foreach (char c in str) {
                 if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {

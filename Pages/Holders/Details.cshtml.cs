@@ -102,7 +102,7 @@ namespace IDCardDemo.Pages.Holders {
             temp_image = XImage.FromStream(bitmapToStream(id_back_bitmap, ImageFormat.Png));
             gfx2.DrawImage(temp_image, 0, 0);
             // Save to PDF
-            string pdf_filename = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", "temp.pdf");
+            string pdf_filename = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_card.pdf");
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             document.Save(pdf_filename);
 

@@ -1,23 +1,29 @@
 # ID Card Demo
 
-```
-## Setup
-## Add a Model
-## Add Card Holder Administration Pages
-## Add Validation
-## Customize Input Elements
-## Add Links to Main Page
-## Add JavaScript
-## Add New Fields to the Model
-## Update the Card Holder Pages
-### Create
-### Edit
-### Details
-### Delete
-## Add CSS
-## Test the Photo and Signature Code
-## Add Printing
-```
+Instructions on how to recreate the ID Card Demo.
+
+- [Setup](#setup)
+- [Add a Model](#add-a-model)
+- [Add Card Holder Administration Pages](#add-card-holder-administration-pages)
+- [Add Validation](#add-validation)
+- [Customize Input Elements](#customize-input-elements)
+- [Add Links to Main Page](#add-links-to-main-page)
+- [Add JavaScript](#add-javascript)
+- [Add New Fields to the Model](#add-new-fields-to-the-model)
+- [Update the Card Holder Pages](#update-the-card-holder-pages)
+  - [Create](#create)
+  - [Edit](#edit)
+  - [Details](#details)
+  - [Delete](#delete)
+- [Add CSS](#add-css)
+- [Test the Photo and Signature Code](#test-the-photo-and-signature-code)
+- [Add Printing](#add-printing)
+- [Add Authentication and Authorization](#add-authentication-and-authorization)
+  - [Part I](#part-i)
+  - [Part II](#part-ii)
+- [Adding Role-based Authorization](#adding-role-based-authorization)
+- [Cleaning up](#cleaning-up)
+- [Publishing Notes and Other Comments](#publishing-notes-and-other-comments)
 
 >**NOTE** - This demo uses .NET Core 3.1. While .NET 6 has superceded .NET Core 3.1, and .NET Core 3.1 end-of-support date is December 13, 2022, you will use it, since not all servers support .NET 6 yet.
 
@@ -1364,13 +1370,36 @@ public async Task<IActionResult> OnPostAsync() {
 Add the following method after ```OnPostAsync```:
 
 ```
-public static void UpdateImageFiles(string tempImageFilePath, string targetImageFilePath) {
-	byte[] tempImageBytes = System.IO.File.ReadAllBytes(tempImageFilePath);
-	System.IO.File.WriteAllBytes(targetImageFilePath, tempImageBytes);
+private static void UpdateImageFiles(string tempImageFilePath, string targetImageFilePath) {
+	// Attempt to update the file 10 times before raising an error
+	for (int x = 0; x <= 10; x++) {
+		if (!IsFileLocked(new FileInfo(tempImageFilePath)) || !IsFileLocked(new FileInfo(targetImageFilePath))) {
+			System.IO.File.Copy(tempImageFilePath, targetImageFilePath, true);
+			return;
+		}
+		// Wait 0.1 seconds before trying again
+		System.Threading.Thread.Sleep(100);
+	}
+	throw new System.IO.IOException(string.Format("Images are locked."));
+	
 }
 
-// Special thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
-public static string RemoveSpecialCharacters(string str) {
+// Thanks to ChrisW https://stackoverflow.com/questions/876473/is-there-a-way-to-check-if-a-file-is-in-use
+private static bool IsFileLocked(FileInfo file) {
+	// Check if file is accessible
+	try {
+		using FileStream stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None); stream.Close();
+	}
+	catch (IOException) {
+		// The file is inaccessible because it is still being written; it is being processed by another thread; or it does not exist (has already been processed)
+		return true;
+	}
+	// The file is not locked
+	return false;
+}
+
+// Thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
+private static string RemoveSpecialCharacters(string str) {
 	StringBuilder sb = new StringBuilder();
 	foreach (char c in str) {
 		if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
@@ -2183,7 +2212,7 @@ If you attempt to access https://localhost:44349/Identity/Account/Register, you 
 
 ![Protected](card_demo_31_wwwroot_protected.png)
 
-## Adding Role-based authorization
+## Adding Role-based Authorization
 
 Fine-tune access to pages and methods using authorization.
 
@@ -2378,7 +2407,7 @@ You may have noticed that you did not do any styling, and you used the default s
 
 ----------
 
-## Publising Notes:
+## Publishing Notes and Other Comments
 
 To get the application ready for deployment, use the ```dotnet publish``` command:
 
@@ -2448,12 +2477,23 @@ Otherwise, you may encounter a ```SqliteException: SQLite Error 14: 'unable to o
 
 If you are using Visual Studio, and you encounter any problems with ```App_Data```, right click on the ```App_Data``` folder and select **Publish App_Data** folder.
 
------
+To revert:
 
-Had to reset repo:
-git reset --hard <commit>
+Reset the repo...
+```
+git reset --hard <previous commit>
 git push --force
+```
 
-And discard local changes:
+Discard local changes...
+```
 git restore .
 git clean -f
+```
+
+And clean the cache...
+
+```
+git rm -r --cached
+git add -A :/
+```
