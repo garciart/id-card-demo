@@ -1,0 +1,70 @@
+@page
+@model IDCardDemo.Pages.Holders.PrintModel
+
+@{
+    ViewData["Title"] = "Print";
+}
+
+<h1>Print</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Holder[0].LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holder[0].FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holder[0].MI)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holder[0].DOB)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holder[0].Gender)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holder[0].Height)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Holder[0].EyeColor)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Holder) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MI)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DOB)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Height)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EyeColor)
+                </td>
+                <td>
+                    <a asp-page="./Details" asp-route-id="@item.ID">Print</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

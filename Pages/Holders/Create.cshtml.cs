@@ -121,7 +121,7 @@ namespace IDCardDemo.Pages.Holders {
                 System.IO.File.Copy(signatureImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath), true);
 
                 // Prepare barcode info
-                string holderInfo = String.Format("{0},{1},{2},{3},{4},{5},{6},{7}",
+                string holderInfo = String.Format("{0},{1},{2},{3},{4},{5},{6}\",EYES:{7}",
                  Holder.LastName.ToUpper(),
                  Holder.FirstName.ToUpper(),
                  String.IsNullOrEmpty(Holder.MI) ? "" : Holder.MI.ToUpper(),
@@ -133,14 +133,12 @@ namespace IDCardDemo.Pages.Holders {
                 // Create and save barcode
                 BarcodeWriter writer = new BarcodeWriter {
                     Format = BarcodeFormat.PDF_417,
-                    Options = { Width = 342, Height = 100 },
+                    Options = { Width = 342, Height = 100, Margin = 0 },
                 };
-                Bitmap barcodeBitmap;
-                writer.Options.Margin = 0;
-                barcodeBitmap = writer.Write(holderInfo);
-                Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
-                barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
-                barcodeBitmap.Dispose();
+                using (Bitmap barcodeBitmap = writer.Write(holderInfo)) {
+                    Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
+                    barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
+                }
 
                 _context.Holder.Add(Holder);
                 await _context.SaveChangesAsync();

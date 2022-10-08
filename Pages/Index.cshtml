@@ -5,11 +5,23 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome!</h1>
+    <img src="~/title-image.png" class="mx-auto img-responsive mw-100" alt="Spidey Card">
+    <p>This Razor Pages web app use SQLite, takes photos, captures touchscreen input, creates bar codes, and renders PDF output.</p>
+    <p>Learn more about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 <div>
-    <a asp-page="/Holders/Create">Add a Holder</a>
-    <br />
-    <a asp-page="/Holders/Index">List Holders</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm mb-3">
+                <a class="btn btn-primary btn-block" asp-page="/Holders/Create">Add a Card Holder</a>
+            </div>
+            <div class="col-sm mb-3">
+                <a class="btn btn-primary btn-block" asp-page="/Holders/Index">Update Card Holders</a>
+            </div>
+            <div class="col-sm mb-3">
+                <a class="btn btn-primary btn-block" asp-page="/Holders/Print">Print an ID Card</a>
+            </div>
+        </div>
+    </div>
 </div>

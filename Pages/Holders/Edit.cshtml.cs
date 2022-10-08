@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ZXing;
 
@@ -114,7 +113,7 @@ namespace IDCardDemo.Pages.Holders {
 
                 // Update images if new ones were made
                 if (photoUploaded) {
-                    // Copy the temp images to photo folder and rename them using the member data
+                    // Copy the temp images to photo folder and rename them using the holder data
                     string tempImageFilePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
                     string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath);
                     UpdateImageFiles(tempImageFilePath, photoImagePath);
@@ -127,7 +126,7 @@ namespace IDCardDemo.Pages.Holders {
                 }
 
                 // Prepare barcode info
-                string memberInfo = String.Format("{0},{1},{2},{3},{4},{5},{6},{7}",
+                string holderInfo = String.Format("{0},{1},{2},{3},{4},{5},{6}\",EYES:{7}",
                  Holder.LastName.ToUpper(),
                  Holder.FirstName.ToUpper(),
                  String.IsNullOrEmpty(Holder.MI) ? "" : Holder.MI.ToUpper(),
@@ -139,13 +138,11 @@ namespace IDCardDemo.Pages.Holders {
                 // Create and save barcode
                 BarcodeWriter writer = new BarcodeWriter {
                     Format = BarcodeFormat.PDF_417,
-                    Options = { Width = 342, Height = 100 },
+                    Options = { Width = 342, Height = 100, Margin = 0 },
                 };
-                Bitmap barcodeBitmap;
-                writer.Options.Margin = 0;
-                barcodeBitmap = writer.Write(memberInfo);
-                barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
-                barcodeBitmap.Dispose();
+                using (Bitmap barcodeBitmap = writer.Write(holderInfo)) {
+                    barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
+                }
 
                 _context.Attach(Holder).State = EntityState.Modified;
 
@@ -178,16 +175,16 @@ namespace IDCardDemo.Pages.Holders {
         }
 
         private static void UpdateImageFiles(string tempImageFilePath, string targetImageFilePath) {
-            // Attempt to update the file 10 times before raising an error
-            for (int x = 0; x <= 10; x++) {
-                if (!IsFileLocked(new FileInfo(tempImageFilePath)) || !IsFileLocked(new FileInfo(targetImageFilePath))) {
+            // Attempt to update the file 20 times over 5 seconds before raising an error that the file is locked
+            for (int x = 0; x <= 20; x++) {
+                if (!IsFileLocked(new FileInfo(tempImageFilePath)) && !IsFileLocked(new FileInfo(targetImageFilePath))) {
                     System.IO.File.Copy(tempImageFilePath, targetImageFilePath, true);
                     // byte[] tempImageBytes = System.IO.File.ReadAllBytes(tempImageFilePath);
                     // System.IO.File.WriteAllBytes(targetImageFilePath, tempImageBytes);
                     return;
                 }
-                // Wait 0.1 seconds before trying again
-                System.Threading.Thread.Sleep(100);
+                // Wait 1/4 second before trying again
+                System.Threading.Thread.Sleep(250);
             }
             throw new System.IO.IOException(string.Format("Images are locked."));
             
@@ -205,17 +202,6 @@ namespace IDCardDemo.Pages.Holders {
             }
             // The file is not locked
             return false;
-        }
-
-        // Thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
-        private static string RemoveSpecialCharacters(string str) {
-            StringBuilder sb = new StringBuilder();
-            foreach (char c in str) {
-                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-                    sb.Append(c);
-                }
-            }
-            return sb.ToString();
         }
 
         private bool HolderExists(int id) {

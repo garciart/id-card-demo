@@ -1094,7 +1094,7 @@ public async Task<IActionResult> OnPostAsync() {
 		System.IO.File.Copy(signatureImagePath, Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath), true);
 
 		// Prepare barcode info
-		string memberInfo = String.Format("{0},{1},{2},{3},{4},{5},{6},{7}",
+		string holderInfo = String.Format("{0},{1},{2},{3},{4},{5},{6}\",EYES:{7}",
 		 Holder.LastName.ToUpper(),
 		 Holder.FirstName.ToUpper(),
 		 String.IsNullOrEmpty(Holder.MI) ? "" : Holder.MI.ToUpper(),
@@ -1106,14 +1106,12 @@ public async Task<IActionResult> OnPostAsync() {
 		// Create and save barcode
 		BarcodeWriter writer = new BarcodeWriter {
 			Format = BarcodeFormat.PDF_417,
-			Options = { Width = 342, Height = 100 },
+			Options = { Width = 342, Height = 100, Margin = 0 },
 		};
-		Bitmap barcodeBitmap;
-		writer.Options.Margin = 0;
-		barcodeBitmap = writer.Write(memberInfo);
-		Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
-		barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
-		barcodeBitmap.Dispose();
+		using (Bitmap barcodeBitmap = writer.Write(holderInfo)) {
+			Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
+			barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
+		}
 
 		_context.Holder.Add(Holder);
 		await _context.SaveChangesAsync();
@@ -1237,7 +1235,9 @@ Add the following references (at the top of the file):
 using Microsoft.AspNetCore.Hosting;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using ZXing;
 ```
 
@@ -1302,7 +1302,7 @@ public async Task<IActionResult> OnPostAsync() {
 
 		// Update images if new ones were made
 		if (photoUploaded) {
-			// Copy the temp images to photo folder and rename them using the member data
+			// Copy the temp images to photo folder and rename them using the holder data
 			string tempImageFilePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_photo.png");
 			string photoImagePath = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath);
 			UpdateImageFiles(tempImageFilePath, photoImagePath);
@@ -1315,7 +1315,7 @@ public async Task<IActionResult> OnPostAsync() {
 		}
 
 		// Prepare barcode info
-		string memberInfo = String.Format("{0},{1},{2},{3},{4},{5},{6},{7}",
+		string holderInfo = String.Format("{0},{1},{2},{3},{4},{5},{6}\",EYES:{7}",
 		 Holder.LastName.ToUpper(),
 		 Holder.FirstName.ToUpper(),
 		 String.IsNullOrEmpty(Holder.MI) ? "" : Holder.MI.ToUpper(),
@@ -1327,14 +1327,11 @@ public async Task<IActionResult> OnPostAsync() {
 		// Create and save barcode
 		BarcodeWriter writer = new BarcodeWriter {
 			Format = BarcodeFormat.PDF_417,
-			Options = { Width = 342, Height = 100 },
+			Options = { Width = 342, Height = 100, Margin = 0 },
 		};
-		Bitmap barcodeBitmap;
-		writer.Options.Margin = 0;
-		barcodeBitmap = writer.Write(memberInfo);
-		//Holder.PDF417Path = String.Format("{0}_code.png", userFileName);
-		barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
-		barcodeBitmap.Dispose();
+		using (Bitmap barcodeBitmap = writer.Write(holderInfo)) {
+			barcodeBitmap.Save(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path), System.Drawing.Imaging.ImageFormat.Png);
+		}
 
 		_context.Attach(Holder).State = EntityState.Modified;
 
@@ -1371,14 +1368,16 @@ Add the following method after ```OnPostAsync```:
 
 ```
 private static void UpdateImageFiles(string tempImageFilePath, string targetImageFilePath) {
-	// Attempt to update the file 10 times before raising an error
-	for (int x = 0; x <= 10; x++) {
-		if (!IsFileLocked(new FileInfo(tempImageFilePath)) || !IsFileLocked(new FileInfo(targetImageFilePath))) {
+	// Attempt to update the file 20 times over 5 seconds before raising an error that the file is locked
+	for (int x = 0; x <= 20; x++) {
+		if (!IsFileLocked(new FileInfo(tempImageFilePath)) && !IsFileLocked(new FileInfo(targetImageFilePath))) {
 			System.IO.File.Copy(tempImageFilePath, targetImageFilePath, true);
+			// byte[] tempImageBytes = System.IO.File.ReadAllBytes(tempImageFilePath);
+			// System.IO.File.WriteAllBytes(targetImageFilePath, tempImageBytes);
 			return;
 		}
-		// Wait 0.1 seconds before trying again
-		System.Threading.Thread.Sleep(100);
+		// Wait 1/4 second before trying again
+		System.Threading.Thread.Sleep(250);
 	}
 	throw new System.IO.IOException(string.Format("Images are locked."));
 	
@@ -1396,17 +1395,6 @@ private static bool IsFileLocked(FileInfo file) {
 	}
 	// The file is not locked
 	return false;
-}
-
-// Thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
-private static string RemoveSpecialCharacters(string str) {
-	StringBuilder sb = new StringBuilder();
-	foreach (char c in str) {
-		if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
-			sb.Append(c);
-		}
-	}
-	return sb.ToString();
 }
 ```
 
@@ -1648,7 +1636,9 @@ Get the following files from this repository:
 ```
 images\id_card_front.png
 images\id_card_back.png
+images\no_code.png
 images\no_picture.png
+images\no_signature.png
 ```
 
 Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open ```Details.cshtml```, and replace the last ```<div>``` element with:
@@ -1680,7 +1670,9 @@ using PdfSharp.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 ```
 
 
@@ -1700,80 +1692,84 @@ public DetailsModel(IDCardDemo.Data.IDCardDemoContext context, IWebHostEnvironme
 Add the following methods after ```OnGetAsync```:
 
 ```
-public async Task<IActionResult> OnPostPrintCard(int? id) {
+public IActionResult OnPostPrintCard(int? id) {
 	if (id == null) {
 		return NotFound();
 	}
 
-	Holder = await _context.Holder.FirstOrDefaultAsync(m => m.ID == id);
+	// Holder = await _context.Holder.FirstOrDefaultAsync(m => m.ID == id);
+	Holder = _context.Holder.FirstOrDefault(m => m.ID == id);
+
+	string pdf_filename = Path.Combine(_environment.ContentRootPath, "wwwroot\\temp", "temp_card.pdf");
+
 	// Load images
-	Bitmap id_front_bitmap = new Bitmap(Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "id_card_front.png"));
-	Bitmap id_back_bitmap = new Bitmap(Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "id_card_back.png"));
-	Graphics id_front_Graphics = Graphics.FromImage(id_front_bitmap);
-	Graphics id_back_Graphics = Graphics.FromImage(id_back_bitmap);
+	using (Bitmap id_front_bitmap = new Bitmap(Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "id_card_front.png")),
+		  id_back_bitmap = new Bitmap(Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "id_card_back.png"))) {
+		using Graphics id_front_Graphics = Graphics.FromImage(id_front_bitmap),
+			   id_back_Graphics = Graphics.FromImage(id_back_bitmap);
+		
+		// Draw front of card, signature first
+		string holder_signature_path = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath);
+		if (!System.IO.File.Exists(holder_signature_path)) {
+			holder_signature_path = Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "no_signature.png");
+		}
+		using (Image holder_signature = Image.FromFile(holder_signature_path)) {
+			Image resized_holder_signature = ResizeImage(holder_signature, new Size(240, 90));
+			using Bitmap holder_signature_clear = new Bitmap(resized_holder_signature);
+			// Make signature background color transparent
+			holder_signature_clear.MakeTransparent(Color.White);
+			id_front_Graphics.DrawImage(holder_signature_clear, 90, 200);
+		}
 
-	// Draw front of card, signature first
-	Image holder_signature = Image.FromFile(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.SignaturePath));
-	holder_signature = resizeImage(holder_signature, new Size(240, 90));
-	Bitmap holder_signature_clear = new Bitmap(holder_signature);
+		string holder_picture_path = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath);
+		if (!System.IO.File.Exists(holder_picture_path)) {
+			holder_picture_path = Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "no_picture.png");
+		}
+		using (Image holder_picture = Image.FromFile(holder_picture_path)) {
+			Image resized_holder_picture = ResizeImage(holder_picture, new Size(160, 160));
+			id_front_Graphics.DrawImage(resized_holder_picture, 305, 72);
+		}
 
-	// Make signature background color transparent
-	holder_signature_clear.MakeTransparent(Color.White);
-	id_front_Graphics.DrawImage(holder_signature_clear, 90, 200);
-	Image holder_picture = null;
-	try {
-		holder_picture = Image.FromFile(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PhotoPath));
+		// Create font and brush, then add info
+		using (Font drawFont = new Font("Arial", 13f, FontStyle.Bold)) {
+			using SolidBrush drawBrush = new SolidBrush(Color.Black); id_front_Graphics.DrawString(String.Format("{0},\r\n{1} {2}\r\n\r\n1 MAIN ST\r\nANY TOWN, MD 12345\r\n\r\nDOB: {3}\r\nSEX: {4} / HT: {5}\"\r\nEYES: {6}", Holder.LastName, Holder.FirstName, Holder.MI, Holder.DOB.ToShortDateString(), Holder.Gender, Holder.Height, Holder.EyeColor), drawFont, drawBrush, 92, 45);
+		}
+
+		// Draw back of card
+		string holder_barcode_path = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path);
+		if (!System.IO.File.Exists(holder_barcode_path)) {
+			holder_barcode_path = Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "no_picture.png");
+		}
+		using (Image holder_barcode = Image.FromFile(holder_barcode_path)) {
+			id_back_Graphics.DrawImage(holder_barcode, 25, 170);
+		}
+
+		// Create a new PDF document
+		using PdfDocument document = new PdfDocument(); document.Info.Title = String.Format("ID Card for {0}, {1} {2}.", Holder.LastName, Holder.FirstName, Holder.MI);
+		// Create empty pages
+		PdfPage page1 = document.AddPage();
+		page1.Height = XUnit.FromInch(3.16);
+		page1.Width = XUnit.FromInch(5);
+		PdfPage page2 = document.AddPage();
+		page2.Height = XUnit.FromInch(3.16);
+		page2.Width = XUnit.FromInch(5);
+
+		// Get XGraphics objects for drawing
+		using (XGraphics gfx1 = XGraphics.FromPdfPage(page1), gfx2 = XGraphics.FromPdfPage(page2)) {
+			using (XImage temp_image = XImage.FromStream(BitmapToStream(id_front_bitmap, ImageFormat.Png))) {
+				gfx1.DrawImage(temp_image, 0, 0);
+			}
+			gfx2.SmoothingMode = XSmoothingMode.HighQuality;
+			using (XImage temp_image = XImage.FromStream(BitmapToStream(id_back_bitmap, ImageFormat.Png))) {
+				id_back_bitmap.RotateFlip(RotateFlipType.Rotate180FlipNone);
+				gfx2.DrawImage(temp_image, 0, 0);
+			}
+		}
+		// Save to PDF
+		Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+		document.Save(pdf_filename);
 	}
-	catch {
-		holder_picture = Image.FromFile(Path.Combine(_environment.ContentRootPath, "wwwroot\\images", "no_picture.png"));
-	}
-	holder_picture = resizeImage(holder_picture, new Size(160, 160));
-	id_front_Graphics.DrawImage(holder_picture, 305, 72);
-
-	// Create font and brush, then add info
-	Font drawFont = new Font("Arial", 13f, FontStyle.Bold);
-	SolidBrush drawBrush = new SolidBrush(System.Drawing.Color.Black);
-	id_front_Graphics.DrawString(String.Format("{0},\r\n{1} {2}\r\n\r\n1 MAIN ST\r\nANY TOWN, MD 12345\r\n\r\nDOB: {3}\r\nSEX: {4} / HT: {5}\"\r\nEYES: {6}", Holder.LastName, Holder.FirstName, Holder.MI, Holder.DOB.ToShortDateString(), Holder.Gender, Holder.Height, Holder.EyeColor), drawFont, drawBrush, 92, 45);
-
-	// Draw back of card
-	Image holder_barcode = Image.FromFile(Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", Holder.PDF417Path));
-	id_back_Graphics.DrawImage(holder_barcode, 25, 170);
-
-	// Create a new PDF document
-	PdfDocument document = new PdfDocument();
-	document.Info.Title = String.Format("ID Card for {0}, {1} {2}.", Holder.LastName, Holder.FirstName, Holder.MI);
-
-	// Create empty pages
-	PdfPage page1 = document.AddPage();
-	page1.Height = XUnit.FromInch(3.16);
-	page1.Width = XUnit.FromInch(5);
-	PdfPage page2 = document.AddPage();
-	page2.Height = XUnit.FromInch(3.16);
-	page2.Width = XUnit.FromInch(5);
-
-	// Get XGraphics objects for drawing
-	XGraphics gfx1 = XGraphics.FromPdfPage(page1);
-	XGraphics gfx2 = XGraphics.FromPdfPage(page2);
-	gfx2.SmoothingMode = XSmoothingMode.HighQuality;
-	XImage temp_image = null;
-	temp_image = XImage.FromStream(bitmapToStream(id_front_bitmap, ImageFormat.Png));
-	gfx1.DrawImage(temp_image, 0, 0);
-	id_back_bitmap.RotateFlip(RotateFlipType.Rotate180FlipNone);
-	temp_image = XImage.FromStream(bitmapToStream(id_back_bitmap, ImageFormat.Png));
-	gfx2.DrawImage(temp_image, 0, 0);
-	// Save to PDF
-	string pdf_filename = Path.Combine(_environment.ContentRootPath, "wwwroot\\photos", "temp.pdf");
-	Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-	document.Save(pdf_filename);
-
-	id_front_bitmap.Dispose();
-	id_back_bitmap.Dispose();
-	id_front_Graphics.Dispose();
-	id_back_Graphics.Dispose();
-
-	// Special Thanks to CodeCaster at https://stackoverflow.com/questions/40486431/return-pdf-to-the-browser-using-asp-net-core
-	var stream = new FileStream(pdf_filename, FileMode.Open);
-	return new FileStreamResult(stream, "application/pdf");
+	return new PhysicalFileResult(pdf_filename, "application/pdf");
 }
 // Special thanks to Guffa http://stackoverflow.com/questions/1120198/most-efficient-way-to-remove-special-characters-from-string
 public static string RemoveSpecialCharacters(string str) {
@@ -1785,11 +1781,11 @@ public static string RemoveSpecialCharacters(string str) {
 	}
 	return sb.ToString();
 }
-public static Image resizeImage(Image imgToResize, Size size) {
+public static Image ResizeImage(Image imgToResize, Size size) {
 	return (Image)(new Bitmap(imgToResize, size));
 }
 
-public static Stream bitmapToStream(Bitmap bitmap, ImageFormat format) {
+public static Stream BitmapToStream(Bitmap bitmap, ImageFormat format) {
 	var stream = new MemoryStream();
 	bitmap.Save(stream, format);
 	stream.Position = 0;
@@ -1821,6 +1817,8 @@ When finished, close the browser, then press <kbd>Ctrl</kbd> + <kbd>C</kbd> to c
 ## Add Authentication and Authorization
 
 ### Part I
+
+**NOTE** - You will protect your web site with a simple, but unmodifiable, authentication and authorization system. Createing a full-featured authentication and authorization is beyond the scope of this tutorial at this time.
 
 **NOTE** - Here comes a lot of code again! Save often!
 
@@ -2081,6 +2079,20 @@ Make sure you can log back in:
 Log out and repeat this process for the Manager and Sponsor accounts.
 
 When finished, close the browser, then press <kbd>Ctrl</kbd> + <kbd>C</kbd> to continue.
+
+To prevent additional registrations, open the ```Login.cshtml``` file, and remove the following code...
+
+```
+<div class="form-group">
+	<p>
+		<a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+	</p>
+	<p>
+		<a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+	</p>
+</div>
+```
+
 
 ### Part II
 
