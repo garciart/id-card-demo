@@ -126,15 +126,16 @@ namespace IDCardDemo.Pages.Holders {
                 }
 
                 // Prepare barcode info
-                string holderInfo = String.Format("{0},{1},{2},{3},{4},{5},{6}\",EYES:{7}",
-                 Holder.LastName.ToUpper(),
-                 Holder.FirstName.ToUpper(),
-                 String.IsNullOrEmpty(Holder.MI) ? "" : Holder.MI.ToUpper(),
-                 "1 MAIN ST ANY TOWN MD 12345-0000",
-                 Holder.DOB.ToString("MM/dd/yyyy"),
-                 Holder.Gender.ToUpper(),
-                 Holder.Height,
-                 Holder.EyeColor);
+                string holderInfo = String.Format("{0},{1},{2},{3},{4},{5},{6},{7}\",EYES:{8}",
+                    Holder.ID,
+                    Holder.LastName.ToUpper(),
+                    Holder.FirstName.ToUpper(),
+                    String.IsNullOrEmpty(Holder.MI) ? "" : Holder.MI.ToUpper(),
+                    "1 MAIN ST ANY TOWN MD 12345-0000",
+                    Holder.DOB.ToString("MM/dd/yyyy"),
+                    Holder.Gender.ToUpper(),
+                    Holder.Height,
+                    Holder.EyeColor);
                 // Create and save barcode
                 BarcodeWriter writer = new BarcodeWriter {
                     Format = BarcodeFormat.PDF_417,
@@ -187,7 +188,7 @@ namespace IDCardDemo.Pages.Holders {
                 System.Threading.Thread.Sleep(250);
             }
             throw new System.IO.IOException(string.Format("Images are locked."));
-            
+
         }
 
         // Thanks to ChrisW https://stackoverflow.com/questions/876473/is-there-a-way-to-check-if-a-file-is-in-use

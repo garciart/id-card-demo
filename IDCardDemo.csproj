@@ -8,6 +8,53 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="docs\title-image.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="docs\card_demo_01_id.png" />
+    <Content Include="docs\card_demo_02_create_page.png" />
+    <Content Include="docs\card_demo_03_create.png" />
+    <Content Include="docs\card_demo_04_list.png" />
+    <Content Include="docs\card_demo_05_details.png" />
+    <Content Include="docs\card_demo_06_edit.png" />
+    <Content Include="docs\card_demo_07_update.png" />
+    <Content Include="docs\card_demo_08_delete.png" />
+    <Content Include="docs\card_demo_09_deleted.png" />
+    <Content Include="docs\card_demo_0X_permissions.png" />
+    <Content Include="docs\card_demo_10_validation.png" />
+    <Content Include="docs\card_demo_11_required.png" />
+    <Content Include="docs\card_demo_12_dropdown.png" />
+    <Content Include="docs\card_demo_13_calendar.png" />
+    <Content Include="docs\card_demo_14_no_future_date.png" />
+    <Content Include="docs\card_demo_15_main_page_links.png" />
+    <Content Include="docs\card_demo_16_new_edit.png" />
+    <Content Include="docs\card_demo_17_add_photo.png" />
+    <Content Include="docs\card_demo_18_add_signature.png" />
+    <Content Include="docs\card_demo_19_new_details.png" />
+    <Content Include="docs\card_demo_20_new_update.png" />
+    <Content Include="docs\card_demo_21_new_delete.png" />
+    <Content Include="docs\card_demo_22_print_card.png" />
+    <Content Include="docs\card_demo_23_card_printed.png" />
+    <Content Include="docs\card_demo_24_register.png" />
+    <Content Include="docs\card_demo_25_logged_in.png" />
+    <Content Include="docs\card_demo_26_logout.png" />
+    <Content Include="docs\card_demo_27_login.png" />
+    <Content Include="docs\card_demo_28_blocked.png" />
+    <Content Include="docs\card_demo_29_not_blocked.png" />
+    <Content Include="docs\card_demo_30_wwwroot_unprotected.png" />
+    <Content Include="docs\card_demo_31_wwwroot_protected.png" />
+    <Content Include="docs\card_demo_32_role_blocked.png" />
+    <Content Include="docs\demo_card_orig.png" />
+    <Content Include="docs\dump.txt" />
+    <Content Include="docs\README.md" />
+    <Content Include="docs\title-image.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
   </ItemGroup>
 
@@ -32,28 +79,6 @@
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="2.1.0" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="ZXing.Net" Version="0.16.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\docs\card_demo_01_id.png" />
-    <None Include="wwwroot\docs\card_demo_02_create_page.png" />
-    <None Include="wwwroot\docs\card_demo_03_create.png" />
-    <None Include="wwwroot\docs\card_demo_04_list.png" />
-    <None Include="wwwroot\docs\card_demo_05_details.png" />
-    <None Include="wwwroot\docs\card_demo_06_edit.png" />
-    <None Include="wwwroot\docs\card_demo_07_update.png" />
-    <None Include="wwwroot\docs\card_demo_08_delete.png" />
-    <None Include="wwwroot\docs\card_demo_09_deleted.png" />
-    <None Include="wwwroot\docs\card_demo_0X_permissions.png" />
-    <None Include="wwwroot\docs\card_demo_10_validation.png" />
-    <None Include="wwwroot\docs\card_demo_11_required.png" />
-    <None Include="wwwroot\docs\card_demo_12_dropdown.png" />
-    <None Include="wwwroot\docs\card_demo_13_calendar.png" />
-    <None Include="wwwroot\docs\card_demo_14_no_future_date.png" />
-    <None Include="wwwroot\docs\card_demo_15_main_page_links.png" />
-    <None Include="wwwroot\docs\card_demo_16_new_edit.png" />
-    <None Include="wwwroot\docs\dump.txt" />
-    <None Include="wwwroot\docs\README.md" />
   </ItemGroup>
 
   <ItemGroup>
