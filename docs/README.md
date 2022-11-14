@@ -2549,6 +2549,8 @@ with...
 			</td>
 ```
 
+![Styling](card_demo_33_role_styling.png)
+
 You can also include your own styling in **wwwroot/css/site.css**. For example, to make all the labels bold, you can add the following code:
 
 ```
@@ -2641,27 +2643,8 @@ Otherwise, you may encounter a ```SqliteException: SQLite Error 14: 'unable to o
 
 If you are using Visual Studio, and you encounter any problems with ```App_Data```, right click on the ```App_Data``` folder and select **Publish App_Data** folder.
 
-### Styling
+## That's All Folks!
 
+Thank you for checking out this tutorial. Hopefully, it will help you out.
 
-
-To revert:
-
-Reset the repo...
-```
-git reset --hard <previous commit>
-git push --force
-```
-
-Discard local changes...
-```
-git restore .
-git clean -f
-```
-
-And clean the cache...
-
-```
-git rm -r --cached
-git add -A :/
-```
+Rob Garcia
