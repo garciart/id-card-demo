@@ -76,15 +76,19 @@
     </dl>
 </div>
 <div>
+    <a class="btn btn-outline-danger" asp-page="./Edit" asp-route-id="@Model.Holder.ID">Edit</a>
+</div>
+<hr />
+<div>
     <form asp-page-handler="PrintCard" method="post">
-        <button formtarget="_blank">Print Card</button>
+        <button class="btn btn-success" formtarget="_blank">Print Card</button>
         <input type="hidden" name="id" value="@Model.Holder.ID" />
         <input asp-for="Holder.PhotoPath" class="form-control" hidden readonly />
         <input asp-for="Holder.SignaturePath" class="form-control" hidden readonly />
         <input asp-for="Holder.PDF417Path" class="form-control" hidden readonly />
     </form>
 </div>
+<hr />
 <div>
-    <a asp-page="./Edit" asp-route-id="@Model.Holder.ID">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
+    <a class="btn btn-primary" asp-page="./Index">Back to List</a>
 </div>

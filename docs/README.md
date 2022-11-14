@@ -42,8 +42,8 @@ Instructions on how to recreate the ID Card Demo.
   - [Part I](#part-i)
   - [Part II](#part-ii)
 - [Adding Role-based Authorization](#adding-role-based-authorization)
-- [Cleaning up](#cleaning-up)
-- [Publishing Notes and Other Comments](#publishing-notes-and-other-comments)
+- [Cleaning Up](#cleaning-up)
+- [Styling, Publishing, and Other Notes](#styling-publishing-and-other-notes)
 
 >**NOTE** - This demo uses .NET Core 3.1. While .NET 6 has superceded .NET Core 3.1, and .NET Core 3.1 end-of-support date is December 13, 2022, you will use it, since not all servers support .NET 6 yet.
 
@@ -2435,11 +2435,143 @@ You can use an IDE to clean them up. For example, in Visual Studio, you can righ
 
 You can also reformat the document by clicking on **Edit** -> **Advanced** -> **Format Document** (<kbd>Ctrl</kbd> + <kbd>K</kbd>, <kbd>Ctrl</kbd> + <kbd>D</kbd>).
 
-You may have noticed that you did not do any styling, and you used the default styling. You may customize the appearance of the application to fit your tastes using Bootstrap at https://getbootstrap.com/.
-
 ----------
 
-## Publishing Notes and Other Comments
+## Styling, Publishing, and Other Notes
+
+### Styling
+
+You may have noticed that you did not do any styling, and you used the default styling. You may customize the appearance of the application to fit your tastes using Bootstrap at https://getbootstrap.com/.
+
+To ensure Bootstrap is available to all HTML content, include the required CSS file at the top of **_Layout.cshtml**, and the JavaScript file at the end of **_Layout.cshtml**:
+
+```
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="~/css/site.css" />
+</head>
+```
+
+```
+    <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<script type="text/javascript" language="javascript" src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+```
+
+**NOTE** - Using a **Content Delivery Network** link for the files ensures they will always be up-to-date, but also require bandwidth. There is also the chance of an update that does not work or introduces a vulnerability. If you are concerned about bandwidth or security, you can download a local copy of the CSS and JavaScript files, and link to them instead.
+
+After including these files, you can add Bootstrap styling to hyperlinks, etc. For example, in **Index.cshtml**, replace:
+
+```
+<a asp-page="Create">Create New</a>
+```
+
+with...
+
+```
+<a class="btn btn-primary" asp-page="Create">Create New</a>
+```
+
+This will turn the simple text link into a blue button.
+
+You can also add functionality to the table using [SpryMedia's DataTables plug-in for jQuery](https://datatables.net/ "DataTables plug-in for jQuery"). The DataTables CSS and JavaScript files will allow your users to customize the table, and to search and sort data, without adding back-end code. Follow the instructions at https://datatables.net/ to add these capabilities to your table in minutes. Just remember that the jQuery and Bootstrap file **must** be referenced and loaded before the calling DataTables, since DataTables depends on jQuery and Bootstrap to function.
+
+```
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+	<link rel="stylesheet" href="~/css/site.css" />
+</head>
+```
+
+and
+
+```
+    <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+	<script type="text/javascript" language="javascript" src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+```
+
+If you want to take thing to the next level, you can add a small photo of the card holder to the table:
+
+Replace:
+
+```
+<thead>
+	<tr>
+		<th>
+			@Html.DisplayNameFor(model => model.Holder[0].LastName)
+		</th>
+```
+
+with...
+
+```
+<thead>
+	<tr>
+		<th class="no-sort"></th>
+		<th>
+			@Html.DisplayNameFor(model => model.Holder[0].LastName)
+		</th>
+```
+
+Then replace:
+
+```
+<tbody>
+	@foreach (var item in Model.Holder) {
+		<tr>
+			<td>
+				@Html.DisplayFor(modelItem => item.LastName)
+			</td>
+```
+
+with...
+
+```
+<tbody>
+	@foreach (var item in Model.Holder) {
+		<tr>
+			<td>
+				<a asp-page="./Edit" asp-route-id="@item.ID">
+					<img src="~/photos/@item.PhotoPath"
+					 class="rounded-circle"
+					 height="40" width="40"
+					 asp-append-version="true" />
+				</a>
+			</td>
+			<td>
+				<a asp-page="./Edit" asp-route-id="@item.ID">
+					@Html.DisplayFor(modelItem => item.LastName)
+				</a>
+			</td>
+```
+
+You can also include your own styling in **wwwroot/css/site.css**. For example, to make all the labels bold, you can add the following code:
+
+```
+label {
+    font-weight: bold !important;
+}
+```
+
+The ```!important;``` tag after the property value tells the browser to override any other property values, such as those assigned by Bootstrap. Just do not abuse it or overdo it.
+
+By default, Razor styling (when scaffolded) includes a space for images, instructions, etc., next to the textboxes. To remove or reduce this space, adjust the inline Bootstrap styling. For example, the following change allows the input form to take up 6 out of the 12 standard Bootstrap columns, or half of the display HTML area:
+
+```
+<div class="col-md-4">
+```
+
+to...
+
+```
+<div class="col-md-6">
+```
+
+### Publishing
 
 To get the application ready for deployment, use the ```dotnet publish``` command:
 
@@ -2508,6 +2640,10 @@ After deploying to the server, ensure that the **Application pool group** permis
 Otherwise, you may encounter a ```SqliteException: SQLite Error 14: 'unable to open database file'.``` error.
 
 If you are using Visual Studio, and you encounter any problems with ```App_Data```, right click on the ```App_Data``` folder and select **Publish App_Data** folder.
+
+### Styling
+
+
 
 To revert:
 

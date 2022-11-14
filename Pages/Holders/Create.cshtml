@@ -15,7 +15,7 @@
 <h4>Holder</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h4 class="text-danger font-weight-bold font-weight-italic">@ViewData["Status"]</h4>
         <h4>Fill out the form:</h4>
         <p>An asterisk (*) indicates a required field.</p>
@@ -64,7 +64,7 @@
         <hr />
         <h4>Take a photo:</h4>
         <ol type="a">
-            <li><button onclick="cameraOn()">Turn on the camera</button></li>
+            <li><button class="btn btn-outline-danger" onclick="cameraOn()">Turn on the camera</button></li>
             <li>
                 <p>Center your face in the screen below:</p>
                 <div id="videoContainer">
@@ -72,7 +72,7 @@
                     <video id="webcamVideo" width="300" height="300" autoplay></video>
                 </div>
             </li>
-            <li><button onclick="takePhoto()">Take a photo</button></li>
+            <li><button class="btn btn-outline-danger" onclick="takePhoto()">Take a photo</button></li>
             <li>
                 <p>Review your photo:</p>
                 <canvas id="photoCanvas" width="300" height="300">
@@ -80,18 +80,18 @@
                     tag.
                 </canvas>
             </li>
-            <li><button onclick="savePhoto()">Accept the photo</button></li>
+            <li><button class="btn btn-outline-success" onclick="savePhoto()">Accept the photo</button></li>
         </ol>
         <hr />
         <h4>Add a signature:</h4>
-        <button onclick="clearPad()">Clear the box</button>
+        <button class="btn btn-outline-danger" onclick="clearPad()">Clear the box</button>
         <br />
         <canvas class="my-2" id="signatureCanvas" width="320" height="120">
             Your browser does not support the HTML5 canvas
             tag.
         </canvas>
         <br />
-        <button onclick="saveSignature()">Accept the signature</button>
+        <button class="btn btn-outline-success" onclick="saveSignature()">Accept the signature</button>
         <hr />
         <h4>Add Holder:</h4>
         <p class="p-2 bg-warning text-dark rounded">
@@ -99,18 +99,20 @@
             and that you have accepted both a photo and signature. Otherwise, the page will reload,
             and you will have to submit another photo and signature.
         </p>
-        <input type="submit" value="Add Holder" form="create" />
+        <input class="btn btn-success" type="submit" value="Add Holder" form="create" />
         <hr />
     </div>
 </div>
 
 <div>
-    <a asp-page="Index">Back to List</a>
+    <a class="btn btn-primary" asp-page="Index">Back to List</a>
 </div>
 
 <script type="text/javascript" src="~/js/photo.js" asp-append-version="true"></script>
 <script type="text/javascript" src="~/js/signature_pad.min.js" asp-append-version="true"></script>
 <script type="text/javascript" src="~/js/signature.js" asp-append-version="true"></script>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
