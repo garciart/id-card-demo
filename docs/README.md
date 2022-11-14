@@ -2549,7 +2549,7 @@ with...
 			</td>
 ```
 
-![Styling](card_demo_33_role_styling.png)
+![Styling](card_demo_33_styling.png)
 
 You can also include your own styling in **wwwroot/css/site.css**. For example, to make all the labels bold, you can add the following code:
 
