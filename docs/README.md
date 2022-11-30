@@ -14,7 +14,7 @@ Here's the code, and if you need REAL ID compliant cards for your company, you c
 
 ## Solution Stack
 
-.NET Core 3.1, SQLite, C#
+.NET Core 3.1, SQLite, C#, JavaScript
 
 ## References:
 
@@ -201,6 +201,27 @@ Open a browser and navigate to http://localhost:5000/ (or https://localhost:5001
 ![First Run](card_demo_01_id.png)
 
 When finished, close the browser, then press <kbd>Ctrl</kbd> + <kbd>C</kbd> to continue.
+
+> **NOTE** - If you are commiting between sections and make a mistake, to revert:
+> 
+> Reset the repo...
+> ```
+> git reset --hard <previous commit>
+> git push --force
+> ```
+> 
+> Discard local changes...
+> ```
+> git restore .
+> git clean -f
+> ```
+> 
+> And clean the cache...
+> 
+> ```
+> git rm -r --cached
+> git add -A :/
+> ```
 
 -----
 
@@ -441,14 +462,15 @@ public string FirstName {
 	set => _firstName = !String.IsNullOrEmpty(value) ? value.ToUpper() : value;
 }
 
+#nullable enable
 /// <summary>
 /// <value>Property <c>Middle Initial</c> is not required, but if present, it must be a single capital letter.</value>
 /// </summary>
-private string _mi;
+private string? _mi;
 [Display(Name = "MI")]
 [RegularExpression(@"^[A-Z]?$", ErrorMessage = "Middle Initial must be a capital letter.")]
 [StringLength(1, MinimumLength = 0, ErrorMessage = "Middle Initial must be between {2} and {1} characters long.")]
-#nullable enable
+
 public string? MI {
 	get => _mi;
 	// Convert to uppercase before storing
@@ -463,7 +485,6 @@ public string? MI {
 [Display(Name = "DOB")]
 [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
 [Required(ErrorMessage = "Date of Birth required.")]
-[NoFutureDOB(ErrorMessage="Date of Birth cannot be in the future.")]
 public DateTime DOB { get; set; }
 
 /// <summary>
@@ -587,7 +608,7 @@ and
 
 with...
 
-```<select asp-for="Holder.Height" asp-items="Model.Heights" class="form-control"></select>```
+```<select asp-for="Holder.Height" asp-items="Model.Height" class="form-control"></select>```
 and
 ```<select asp-for="Holder.EyeColor" asp-items="Model.EyeColor" class="form-control"></select>```
 
@@ -595,7 +616,7 @@ In ```Create.cshtml.cs```, replace the **```CreateModel```** method with the fol
 
 ```
 // References to the HTML elements populated from the code-behind using loops, etc.
-public IEnumerable<SelectListItem> Heights { get; set; }
+public IEnumerable<SelectListItem> Height { get; set; }
 public IEnumerable<SelectListItem> EyeColor { get; set; }
 
 public CreateModel(IDCardDemo.Data.IDCardDemoContext context)
@@ -603,7 +624,7 @@ public CreateModel(IDCardDemo.Data.IDCardDemoContext context)
     _context = context;
 
     // Use loops to populate large dropdown lists
-    Heights = Enumerable.Range(24, 96).Select(x => new SelectListItem
+    Height = Enumerable.Range(24, 96).Select(x => new SelectListItem
     {
         Value = x.ToString(),
         Text = String.Format("{0}\" ({1}\' {2}\")", x, (int)x / 12, x % 12),
@@ -766,7 +787,7 @@ In the ```wwwroot``` directory, go to the JavaScript sub-directory:
 
 **NOTE** - When you eventually deploy your web application, **```wwwroot```** will be the *accessible* part of your site, where you can store files. All your other code, with the exception of ```App_Data```, will be compiled into a single executable file, named ***idcardemo.exe***.
 
-```cd wwwroot/js```
+```cd js```
 
 Download Szymon Nowak's excellent Signature Pad JavaScript program:
 
@@ -1000,7 +1021,7 @@ public string SignaturePath { get; set; }
 public string PDF417Path { get; set; }
 ```
 
-Update the database:
+Go back to the root directory and update the database:
 
 **NOTE** - Since you are adding columns, but not altering them, you do not have to recreate the database.
 
@@ -1188,7 +1209,16 @@ with...
 
 ```<form id="create" method="post">```
 
-Near the bottom, replace everything after the last ```<div class="form-group">``` with:
+Near the bottom, replace:
+
+```
+	<div class="form-group">
+		<input type="submit" value="Create" />
+	</div>
+</form>
+```
+
+with...
 
 ```
         </form>
@@ -1206,7 +1236,7 @@ Near the bottom, replace everything after the last ```<div class="form-group">``
             <li><button onclick="takePhoto()">Take a photo</button></li>
             <li>
                 <p>Review your photo:</p>
-                <canvas id="photoCanvas" width="300" height="300"">
+                <canvas id="photoCanvas" width="300" height="300">
                     Your browser does not support the HTML5 canvas tag.
                 </canvas>
             </li>
@@ -1439,7 +1469,16 @@ with...
 
 ```<form id="edit" method="post">```
 
-Near the bottom, replace everything after the last ```<div class="form-group">``` with:
+Near the bottom, replace:
+
+```
+	<div class="form-group">
+		<input type="submit" value="Save" />
+	</div>
+</form>
+```
+
+with...
 
 ```
             <input asp-for="Holder.PhotoPath" class="form-control" hidden readonly />
@@ -1543,6 +1582,35 @@ Right after the last description item (should be ```EyeColor```, add the followi
 ```
 
 ### Delete
+
+Open ```Delete.cshtml```, and, right above ```<h1>Delete</h1>```, add the following line:
+
+```
+@Html.AntiForgeryToken()
+```
+
+Right after the last description item (should be ```EyeColor```, add the following lines:
+
+```
+<dt class="col-sm-2">
+	@Html.DisplayNameFor(model => model.Member.SignaturePath)
+</dt>
+<dd class="col-sm-10">
+	<img src="../photos/@Html.DisplayFor(model => model.Member.SignaturePath)" alt=@Html.DisplayFor(model => model.Member.SignaturePath) />
+</dd>
+<dt class="col-sm-2">
+	@Html.DisplayNameFor(model => model.Member.PDF417Path)
+</dt>
+<dd class="col-sm-10">
+	<img src="../photos/@Html.DisplayFor(model => model.Member.PDF417Path)" alt=@Html.DisplayFor(model => model.Member.PDF417Path) />
+</dd>
+<dt class="col-sm-2">
+	@Html.DisplayNameFor(model => model.Member.PhotoPath)
+</dt>
+<dd class="col-sm-10">
+	<img src="../photos/@Html.DisplayFor(model => model.Member.PhotoPath)" alt=@Html.DisplayFor(model => model.Member.PhotoPath) />
+</dd>
+```
 
 Open the ```Delete.cshtml.cs``` file.
 
@@ -1666,7 +1734,7 @@ Using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, ope
 ```
 <div>
     <form asp-page-handler="PrintCard" method="post">
-        <buttonformtarget="_blank">Print Card</button>
+        <button formtarget="_blank">Print Card</button>
         <input type="hidden" name="id" value="@Model.Holder.ID" />
 		<input asp-for="Holder.PhotoPath" class="form-control" hidden readonly />
 		<input asp-for="Holder.SignaturePath" class="form-control" hidden readonly />
@@ -1848,10 +1916,12 @@ In order to use this application, and to prevent attackers from creating multipl
 - Manager - Can access the Login, Main Page, Create, Delete, Details, Edit, Index, Print, and Scan pages
 - Administrator - Can access all pages and account administration
 
-Scaffold the **Register** and **Login** pages:
+First, see if **app.db** exists in the **App_Data** directory. If so, delete it.
+
+Next, scaffold the **Register** and **Login** pages:
 
 ```
-dotnet aspnet-codegenerator identity --files "Account.Register;Account.Login"
+dotnet aspnet-codegenerator identity --files "Account.Register;Account.Login" --useSqLite
 ```
 
 This will allow you to edit the code in the **Register** and **Login** pages. However, scaffolding will also add code to override the configuration in ```Startup.cs```. To fix this problem, go the root directory, and, using Visual Studio, Visual Studio Code, or an editor or IDE of your choice, open the ```appsettings.json``` and remove the following line and its preceding comma:
@@ -1899,14 +1969,14 @@ with...
 
 ```
 /// <summary>
-/// <value>Property <c>UserName</c> is required; can contain numbers, dashes, periods, and underscores only; cannot start with a dash; and must be less than 32 characters in length.</value>
+/// <value>Property <c>UserName</c> is required; can contain letters, numbers, '-', '.', '_', and '@' only. Must start with a letter and cannot end with a special character, and must be less than 32 characters in length.</value>
 /// </summary>
 private string _userName;
 [Required]
 [StringLength(32, MinimumLength = 1, ErrorMessage = "{0} must be between {2} and {1} characters long.")]
 [DataType(DataType.Text)]
 [Display(Name = "User Name")]
-[RegularExpression(@"^([\.\dA-Za-z_])([\-\.\dA-Za-z_]*)$", ErrorMessage = "Letters, numbers, dashes, periods, and underscores only. Cannot start with a dash")]
+[RegularExpression(@"^(?!.*[\-\.\@_]{2})([A-Za-z])([\-\.\d\@A-Za-z_]*)([\dA-Za-z])$", ErrorMessage = "Letters, numbers, '-', '.', '_', and '@' only. Must start with a letter and cannot end with a special character")]
 public string UserName {
 	get => _userName;
 	// Convert to uppercase before storing
@@ -1925,6 +1995,14 @@ with...
 ```
 var user = new IdentityUser { UserName = Input.UserName };
 ```
+
+Also replace...
+
+```await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);```
+
+with...
+
+```await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);```
 
 Finally, replace...
 
@@ -1957,6 +2035,8 @@ with...
 await _signInManager.SignInAsync(user, isPersistent: false);
 return LocalRedirect(returnUrl);
 ```
+
+**NOTE** - Check for any other references to email addresses, and comment them out or delete them.
 
 Open the ```Register.cshtml``` file, and replace...
 
@@ -2002,6 +2082,8 @@ with...
 ```
 var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
 ```
+
+**NOTE** - Check for any other references to email addresses, and comment them out or delete them.
 
 Open the ```Login.cshtml``` file, and replace...
 
@@ -2068,6 +2150,13 @@ services.ConfigureApplicationCookie(options =>
 	options.AccessDeniedPath = "/Identity/Account/AccessDenied";
 	options.SlidingExpiration = true;
 });
+```
+
+Initialize the database:
+
+```
+dotnet ef migrations add -c ApplicationDbContext InitialCreate
+dotnet ef database update -c ApplicationDbContext
 ```
 
 Start the app using IIS:
@@ -2222,7 +2311,7 @@ https://localhost:44349/images/id_card_front.png
 
 Only authenticated users can access the files in those folders.
 
-Open ** Startup.cs** and disable the **Register** link by replacing ```app.UseEndpoints``` with:
+Open **Startup.cs** and disable the **Register** link by replacing ```app.UseEndpoints``` with:
 
 ```
 app.UseEndpoints(endpoints => {
@@ -2492,6 +2581,15 @@ and
 	<script type="text/javascript" language="javascript" src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
+```
+
+Male sure you reference the table in your **site.js** file:
+
+```
+// Write your Javascript code.
+$(document).ready(function () {
+    $('#holderTable').DataTable();
+});
 ```
 
 If you want to take thing to the next level, you can add a small photo of the card holder to the table:
